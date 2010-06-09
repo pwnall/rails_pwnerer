@@ -3,6 +3,6 @@
 require 'digest/md5'
 require 'yaml'
 
-module RailsPwnage::Base
+module RailsPwnerer::Base
   
 end

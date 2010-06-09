@@ -1,3 +1,3 @@
-module RailsPwnage::Config
+module RailsPwnerer::Config
 
 end

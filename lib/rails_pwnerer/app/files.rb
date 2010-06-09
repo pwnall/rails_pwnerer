@@ -1,19 +1,19 @@
 # manages an application's file system
 
-class RailsPwnage::App::Files
-  include RailsPwnage::Base
+class RailsPwnerer::App::Files
+  include RailsPwnerer::Base
   
   # dump the application files to the backup area
   def dump_files(app_name, instance_name)
-    pwnerer_user = RailsPwnage::Config[app_name, instance_name][:pwnerer_user]
+    pwnerer_user = RailsPwnerer::Config[app_name, instance_name][:pwnerer_user]
     pwnerer_uid = uid_for_username(pwnerer_user)
     pwnerer_gid = gid_for_username(pwnerer_user)
     
     timestamp = Time.now.strftime '%Y%m%d%H%M%S'
     dump_file = "files/#{app_name}.#{instance_name}_#{timestamp}.tar.gz"
     
-    backup_path = RailsPwnage::Config[app_name, instance_name][:backup_path]
-    app_path = RailsPwnage::Config[app_name, instance_name][:app_path]
+    backup_path = RailsPwnerer::Config[app_name, instance_name][:backup_path]
+    app_path = RailsPwnerer::Config[app_name, instance_name][:app_path]
     Dir.chdir backup_path do
       # create a cold copy of the application files
       cold_copy = File.join('tmp', File.basename(app_path))
@@ -21,7 +21,7 @@ class RailsPwnage::App::Files
       FileUtils.cp_r app_path, 'tmp'
       
       # remove the garbage in the cold copy
-      [RailsPwnage::App::Git, RailsPwnage::App::Svn].each do |mod|
+      [RailsPwnerer::App::Git, RailsPwnerer::App::Svn].each do |mod|
         mod.new.cleanup_app_caches cold_copy, instance_name, true
       end
       
@@ -39,11 +39,11 @@ class RailsPwnage::App::Files
   
   # creates the directory scaffold in the application's backup dir
   def scaffold_backup(app_name, instance_name)
-    pwnerer_user = RailsPwnage::Config[app_name, instance_name][:pwnerer_user]
+    pwnerer_user = RailsPwnerer::Config[app_name, instance_name][:pwnerer_user]
     pwnerer_uid = uid_for_username(pwnerer_user)
     pwnerer_gid = gid_for_username(pwnerer_user)
 
-    backup_path = RailsPwnage::Config[app_name, instance_name][:backup_path]
+    backup_path = RailsPwnerer::Config[app_name, instance_name][:backup_path]
     FileUtils.mkpath backup_path unless File.exists? backup_path
     File.chown(pwnerer_uid, pwnerer_gid, backup_path)
     
@@ -57,8 +57,8 @@ class RailsPwnage::App::Files
   
   # loads the latest file dump from the backup area
   def load_files(app_name, instance_name)
-    backup_path = RailsPwnage::Config[app_name, instance_name][:backup_path]
-    app_path = RailsPwnage::Config[app_name, instance_name][:app_path]
+    backup_path = RailsPwnerer::Config[app_name, instance_name][:backup_path]
+    app_path = RailsPwnerer::Config[app_name, instance_name][:app_path]
     
     dump_file = Dir.glob(File.join(backup_path, "files/#{app_name}.#{instance_name}_*")).max
     unless dump_file
@@ -73,7 +73,7 @@ class RailsPwnage::App::Files
   
   # remove the application files
   def drop_files(app_name, instance_name)
-    app_config = RailsPwnage::Config[app_name, instance_name]
+    app_config = RailsPwnerer::Config[app_name, instance_name]
     # exit and don't complain if the app is busted
     return unless app_config and File.exists? app_config[:app_path]
 
@@ -89,7 +89,7 @@ class RailsPwnage::App::Files
       drop_files app_name, instance_name
       load_files app_name, instance_name      
     when :console
-      Dir.chdir(RailsPwnage::Config[app_name, instance_name][:app_path]) do
+      Dir.chdir(RailsPwnerer::Config[app_name, instance_name][:app_path]) do
         if File.exist? 'script/rails'
           Kernel.system 'rails console production'
         else
@@ -97,7 +97,7 @@ class RailsPwnage::App::Files
         end
       end
     when :db_console
-      Dir.chdir(RailsPwnage::Config[app_name, instance_name][:app_path]) do
+      Dir.chdir(RailsPwnerer::Config[app_name, instance_name][:app_path]) do
         if File.exist? 'script/rails'
           Kernel.system 'rails dbconsole production --include-password'
         else

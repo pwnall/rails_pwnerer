@@ -31,7 +31,7 @@ rescue Exception
   end
 end
 
-module RailsPwnage::Base  
+module RailsPwnerer::Base  
   # returns information about a process
   def process_info(pid = nil)
     info = Hash.new

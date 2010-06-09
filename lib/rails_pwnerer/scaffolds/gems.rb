@@ -1,7 +1,7 @@
 # installs the required gems
 
-class RailsPwnage::Scaffolds::Gems
-  include RailsPwnage::Base
+class RailsPwnerer::Scaffolds::Gems
+  include RailsPwnerer::Base
   
   def install_self
     # need to reinstall self because ruby gets swapped while the gem is running

@@ -1,11 +1,11 @@
 # checks out and updates the application from a Git repository
 
-class RailsPwnage::App::Git
-  include RailsPwnage::Base
+class RailsPwnerer::App::Git
+  include RailsPwnerer::Base
   
   # remove any files not in Git in the application dir
   def cleanup_app_dir(app_name, instance_name, target_dir, app_name_is_dir = false)
-    Dir.chdir(app_name_is_dir ? app_name : RailsPwnage::Config[app_name, instance_name][:app_path]) do
+    Dir.chdir(app_name_is_dir ? app_name : RailsPwnerer::Config[app_name, instance_name][:app_path]) do
       Kernel.system "git clean -d -f -x -- #{target_dir}"
       Kernel.system "git checkout -- #{target_dir}"
     end
@@ -14,7 +14,7 @@ class RailsPwnage::App::Git
   # clean up the application directory by removing caches 
   def cleanup_app_caches(app_name, instance_name, app_name_is_dir = false)
     # TODO: this is almost-duplicated in git.rb -- pull up somewhere    
-    app_path = app_name_is_dir ? app_name : RailsPwnage::Config[app_name, instance_name][:app_path]
+    app_path = app_name_is_dir ? app_name : RailsPwnerer::Config[app_name, instance_name][:app_path]
     return unless File.exists?(File.join(app_path, '.git'))
     
     # TODO: learn how Rails caches work and kill those too
@@ -26,7 +26,7 @@ class RailsPwnage::App::Git
 
   # reverts the config changes made by rpwn, so git fetch doesn't get confused
   def revert_config_changes(app_name, instance_name)
-    Dir.chdir RailsPwnage::Config[app_name, instance_name][:app_path] do
+    Dir.chdir RailsPwnerer::Config[app_name, instance_name][:app_path] do
       ['config', 'Gemfile'].each do |dir|
         Kernel.system "git clean -d -f -x -- #{dir}"
         Kernel.system "git checkout -- #{dir}"
@@ -35,14 +35,14 @@ class RailsPwnage::App::Git
   end
   
   def git_update(app_name, instance_name)
-    Dir.chdir RailsPwnage::Config[app_name, instance_name][:app_path] do
+    Dir.chdir RailsPwnerer::Config[app_name, instance_name][:app_path] do
       print "Doing Git pull, please enter your password if prompted...\n"
       Kernel.system 'git pull'
     end
   end
   
   def update(app_name, instance_name)
-    app_path = RailsPwnage::Config[app_name, instance_name][:app_path]
+    app_path = RailsPwnerer::Config[app_name, instance_name][:app_path]
     return unless File.exists?(File.join(app_path, '.git'))
     # TODO: maybe backup old version before issuing the git update?
     
@@ -52,7 +52,7 @@ class RailsPwnage::App::Git
   end
   
   def update_prefetch(app_name, instance_name)
-    app_path = RailsPwnage::Config[app_name, instance_name][:app_path]
+    app_path = RailsPwnerer::Config[app_name, instance_name][:app_path]
     return unless File.exists?(File.join(app_path, '.git'))
     
     Dir.chdir app_path do
@@ -75,7 +75,7 @@ class RailsPwnage::App::Git
     end
     
     return :next unless git_repository =~ /\.git(\/.*)?$/
-    app_path = RailsPwnage::Config[app_name, instance_name][:app_path]
+    app_path = RailsPwnerer::Config[app_name, instance_name][:app_path]
     
     FileUtils.rm_rf app_path
     print "Doing Git clone, please enter your password if prompted...\n"

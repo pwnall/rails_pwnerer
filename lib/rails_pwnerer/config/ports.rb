@@ -1,6 +1,6 @@
 # keeps track of the available ports on the machine
 
-module RailsPwnage::Config
+module RailsPwnerer::Config
   def self.init_ports(free_ports = [[8000, 16000]])
     self.create_db :free_ports
     self[:free_ports][:list] = free_ports

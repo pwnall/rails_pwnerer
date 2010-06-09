@@ -1,6 +1,6 @@
 # extends Base with Rails-related functions
 
-module RailsPwnage::Base
+module RailsPwnerer::Base
   # check if the given path is the root of a Rails application
   def check_rails_root(path = '.')
     ['app', 'config', 'db', 'public', 'script', 'vendor',

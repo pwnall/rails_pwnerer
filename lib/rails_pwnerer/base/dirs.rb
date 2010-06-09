@@ -3,7 +3,7 @@
 require 'etc'
 require 'fileutils'
 
-module RailsPwnage::Base  
+module RailsPwnerer::Base  
   # gets the UID associated with the username
   def uid_for_username(name)
     passwd_entry = Etc.getpwnam(name)

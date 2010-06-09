@@ -1,8 +1,8 @@
 # implements the configuration repository
 
-module RailsPwnage::Config
+module RailsPwnerer::Config
   class << self
-    include RailsPwnage::Base
+    include RailsPwnerer::Base
   end
     
   # maps each database name to its contents
@@ -26,7 +26,7 @@ module RailsPwnage::Config
       end
       def []=(key, value)
         super(key.to_s, value)
-        RailsPwnage::Config.mark_db_dirty @db_name
+        RailsPwnerer::Config.mark_db_dirty @db_name
       end
       def has_key?(key)
         super(key.to_s)
@@ -59,7 +59,7 @@ module RailsPwnage::Config
   def self.get_db(db_name)
     db_name = db_name.to_s
     unless @@db_cache.has_key? db_name    
-      db_path = RailsPwnage::Config.path_to :config
+      db_path = RailsPwnerer::Config.path_to :config
       db_contents = atomic_read(db_path, db_name)
     
       if db_contents.nil?
@@ -77,7 +77,7 @@ module RailsPwnage::Config
   def self.flush_db(db_name)
     db_name = db_name.to_s
     return unless @@db_dirty[db_name]
-    db_path = RailsPwnage::Config.path_to :config
+    db_path = RailsPwnerer::Config.path_to :config
     if @@db_cache[db_name].nil?
       atomic_erase db_path, db_name
     else
@@ -107,7 +107,7 @@ module RailsPwnage::Config
   end
   
   def self.databases()
-    entries = Dir.entries RailsPwnage::Config.path_to(:config)
+    entries = Dir.entries RailsPwnerer::Config.path_to(:config)
     databases = []
     entries.each do |entry|      
       next unless entry =~ /\.yml(2)?$/ 
@@ -117,5 +117,5 @@ module RailsPwnage::Config
   end
   
   # ensures all databases are flushed when the script exits
-  Kernel.at_exit { RailsPwnage::Config.flush_db_cache }  
+  Kernel.at_exit { RailsPwnerer::Config.flush_db_cache }  
 end

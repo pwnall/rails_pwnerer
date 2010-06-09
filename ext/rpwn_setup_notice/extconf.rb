@@ -1,16 +1,22 @@
-# invoked when the gem is installed
+# Invoked when the gem is installed. Hack to get a post-install hook.
 
-# cheat to get the gem installed in the right place even on Debians
+require 'rubygems'
+
+
+# Cheat to get the gem binaries installed in the user's path even on Debians.
 ['rpwn', 'rpwnctl', 'rpwndev'].each do |file|
-  binpath = "/usr/bin/#{file}"
-  unless File.exists? binpath
-    Kernel.system "ln -s #{File.expand_path(__FILE__ + "/../../../bin/#{file}")} #{binpath}"
+  bin_path = "/usr/bin/#{file}"
+  unless File.exists? bin_path
+    source_path = File.expand_path "../../../bin/#{file}", __FILE__
+    Kernel.system "ln -s #{source_path} #{bin_path}"
   end
 
   File.chmod((File.stat(binpath).mode | 0755), binpath) rescue nil
 end
 
-# make the gem readable by anyone (workaround systems with messed up permission masks)
+# Make the gem readable and runnable by anyone.
+#
+# This is a work-around for systems with messed up permission masks.
 def openup(path)
   if File.file?(path)
     File.chmod((File.stat(path).mode | 0755), path) rescue nil
@@ -22,13 +28,15 @@ def openup(path)
     openup File.join(path, entry)
   end  
 end
-base_path = File.expand_path(__FILE__ + "/../../../")
-openup(base_path)
+base_path = File.expand_path "../../..", __FILE__
+openup base_path
 
-# we really shouldn't be abusing rubygems' root; then again, the Debian maintaines shouldn't be
-# abusing the patience of Ruby developers
+# We really shouldn't be abusing rubygems' root. Then again, the Debian
+# maintaines shouldn't be abusing the patience of Ruby developers.
 
-# now trick rubygems into believeing that all is good
-File.open('Makefile', 'w') { |f| f.write "all:\n\ninstall:\n\n" }
-File.open('rpwn_setup_notice.so', 'w') {}
-File.open('rpwn_setup_notice.dll', 'w') {}
+# Now trick rubygems and echoe into believeing that a gem got installed is good.
+ext_binary =  'rpwn_setup_notice' + (Gem.win_platform? ? '.dll' : '.so')
+File.open(ext_binary, 'w') { |f| }
+File.open('Makefile', 'w') do |f|
+  f.write "# target_prefix = #{ext_binary}\nall:\n\ninstall:\n\n"
+end

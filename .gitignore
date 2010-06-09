@@ -1,7 +1,7 @@
 *~
 .loadpath
-ext/Makefile
-ext/*.dll
-ext/*.so
+ext/**/Makefile
+ext/**/*.dll
+ext/**/*.so
+lib/*.so
 pkg
-

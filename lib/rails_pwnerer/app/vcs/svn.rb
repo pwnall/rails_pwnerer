@@ -5,12 +5,12 @@ require 'fileutils'
 require 'pathname'
 require 'rexml/document'
 
-class RailsPwnage::App::Svn
-  include RailsPwnage::Base
+class RailsPwnerer::App::Svn
+  include RailsPwnerer::Base
     
   # remove any files not in SVN in the application dir
   def cleanup_app_dir(app_name, instance_name, target_dir, app_name_is_dir = false)
-    Dir.chdir(app_name_is_dir ? app_name : RailsPwnage::Config[app_name, instance_name][:app_path]) do
+    Dir.chdir(app_name_is_dir ? app_name : RailsPwnerer::Config[app_name, instance_name][:app_path]) do
       # get a listing of what happened in that directory
       xml_status = `svn status --xml #{target_dir}`
       xsdoc = REXML::Document.new xml_status
@@ -27,7 +27,7 @@ class RailsPwnage::App::Svn
   # clean up the application directory by removing caches 
   def cleanup_app_caches(app_name, instance_name, app_name_is_dir = false)
     # TODO: this is almost-duplicated in git.rb -- pull up somewhere
-    app_path = app_name_is_dir ? app_name : RailsPwnage::Config[app_name, instance_name][:app_path]
+    app_path = app_name_is_dir ? app_name : RailsPwnerer::Config[app_name, instance_name][:app_path]
     return unless File.exists?(File.join(app_path, '.svn'))
     
     # TODO: learn how Rails caches work and kill those too
@@ -39,7 +39,7 @@ class RailsPwnage::App::Svn
   
   # reverts the config changes made by rpwn, so svn update doesn't get confused
   def revert_config_changes(app_name, instance_name)
-    Dir.chdir RailsPwnage::Config[app_name, instance_name][:app_path] do
+    Dir.chdir RailsPwnerer::Config[app_name, instance_name][:app_path] do
       ['config', 'Gemfile'].each do |dir|
         Kernel.system "svn revert --recursive #{dir}"
       end
@@ -47,7 +47,7 @@ class RailsPwnage::App::Svn
   end
     
   def svn_update(app_name, instance_name)
-    Dir.chdir RailsPwnage::Config[app_name, instance_name][:app_path] do
+    Dir.chdir RailsPwnerer::Config[app_name, instance_name][:app_path] do
       print "Doing SVN update, please enter your password if prompted...\n"
       success = Kernel.system 'svn update'
       unless success
@@ -60,7 +60,7 @@ class RailsPwnage::App::Svn
   end
 
   def checkout(remote_path, app_name, instance_name)
-    app_path = RailsPwnage::Config[app_name, instance_name][:app_path]
+    app_path = RailsPwnerer::Config[app_name, instance_name][:app_path]
     return :next unless remote_path =~ /svn.*\:\/\// or remote_path =~ /http.*\:\/\/.*svn/
     
     print "Doing SVN checkout, please enter your password if prompted...\n"
@@ -71,7 +71,7 @@ class RailsPwnage::App::Svn
   end
   
   def update(app_name, instance_name)
-    app_path = RailsPwnage::Config[app_name, instance_name][:app_path]
+    app_path = RailsPwnerer::Config[app_name, instance_name][:app_path]
     return unless File.exists?(File.join(app_path, '.svn'))
     
     # TODO: maybe backup old version before issuing the svn update?
@@ -82,7 +82,7 @@ class RailsPwnage::App::Svn
   end  
   
   def update_prefetch(app_name, instance_name)
-    app_path = RailsPwnage::Config[app_name, instance_name][:app_path]
+    app_path = RailsPwnerer::Config[app_name, instance_name][:app_path]
     return unless File.exists?(File.join(app_path, '.svn'))
     
     # TODO: figure out a way to prefetch using SVN (hidden local repo mirror?)

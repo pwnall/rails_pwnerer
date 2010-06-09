@@ -1,7 +1,7 @@
 # installs the required OS (read: Ubuntu / Debian) packages
 
-class RailsPwnage::Scaffolds::Packages
-  include RailsPwnage::Base
+class RailsPwnerer::Scaffolds::Packages
+  include RailsPwnerer::Base
   
   # the packages needed to manage the server remotely and install applications
   def install_management

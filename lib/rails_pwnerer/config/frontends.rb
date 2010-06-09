@@ -1,6 +1,6 @@
 # computes the number of frontends to be used in an application
 
-module RailsPwnage::Config
+module RailsPwnerer::Config
   # the number of frontends for an application
   def self.app_frontends(app_name, instance_name)
     # TODO: this is duplicated in cluster_config.rb -- pull up somewhere

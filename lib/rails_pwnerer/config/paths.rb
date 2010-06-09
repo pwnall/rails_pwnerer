@@ -1,6 +1,6 @@
 # important paths in the filesystem
 
-module RailsPwnage::Config
+module RailsPwnerer::Config
   # the path to something important (e.g. :apps --> path to all production applications)
   def self.path_to(what = :prod, app_name = nil)
     # need to hardcode path to config to avoid endless recursion

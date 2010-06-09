@@ -1,4 +1,4 @@
-module RailsPwnage::Util
+module RailsPwnerer::Util
   # Complex procedure for killing a process or a bunch of process replicas
   # kill_command is the script that's supposed to kill the process / processes (tried first)
   # pid_patters are globs identifying PID files (a file can match any of the patterns)

@@ -1,5 +1,5 @@
-module RailsPwnage::Util
+module RailsPwnerer::Util
   class << self
-    include RailsPwnage::Base
+    include RailsPwnerer::Base
   end  
 end

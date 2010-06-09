@@ -2,11 +2,11 @@
 
 require 'fileutils'
 
-class RailsPwnage::App::ClusterConfig
-  include RailsPwnage::Base
+class RailsPwnerer::App::ClusterConfig
+  include RailsPwnerer::Base
   
   def fix_permissions(app_name, instance_name)
-    app_config = RailsPwnage::Config[app_name, instance_name]    
+    app_config = RailsPwnerer::Config[app_name, instance_name]    
     pwnerer_user = app_config[:pwnerer_user]
     pwnerer_uid = uid_for_username(pwnerer_user)
     pwnerer_group = group_for_username(pwnerer_user)
@@ -25,27 +25,27 @@ class RailsPwnage::App::ClusterConfig
   end
     
   def manage_ports(app_name, instance_name, action)
-    app_config = RailsPwnage::Config[app_name, instance_name]
-    return unless frontends = RailsPwnage::Config.app_frontends(app_name, instance_name)
+    app_config = RailsPwnerer::Config[app_name, instance_name]
+    return unless frontends = RailsPwnerer::Config.app_frontends(app_name, instance_name)
     
     case action
     when :alloc
-      app_config[:port0] = RailsPwnage::Config.alloc_ports frontends
+      app_config[:port0] = RailsPwnerer::Config.alloc_ports frontends
     when :free
-      RailsPwnage::Config.free_ports app_config[:port0], frontends
+      RailsPwnerer::Config.free_ports app_config[:port0], frontends
       return if app_config[:port0] == 0 # do not release if ports have already been released
       app_config[:port0] = 0
     end
-    RailsPwnage::Config.flush_db RailsPwnage::Config.app_db_name(app_name, instance_name)
+    RailsPwnerer::Config.flush_db RailsPwnerer::Config.app_db_name(app_name, instance_name)
   end
 
   def stop(app_name, instance_name)
-    app_config = RailsPwnage::Config[app_name, instance_name]
+    app_config = RailsPwnerer::Config[app_name, instance_name]
     # silently die if the app was completely busted
     return unless app_config and File.exists? app_config[:app_path]
         
     app_path, first_port = app_config[:app_path], app_config[:port0]
-    frontends = RailsPwnage::Config.app_frontends(app_name, instance_name)
+    frontends = RailsPwnerer::Config.app_frontends(app_name, instance_name)
 
     cmdline_patterns = ['thin', nil]
     
@@ -55,7 +55,7 @@ class RailsPwnage::App::ClusterConfig
         fe_port = first_port + f
         cmdline = "thin stop -a 127.0.0.1 -p #{fe_port} -d -P tmp/pids/fe.#{fe_port}.pid"
         cmdline_patterns[1] = "(127.0.0.1:#{fe_port})"
-        RailsPwnage::Util.kill_process_set(cmdline, "tmp/pids/fe.#{fe_port}.pid",
+        RailsPwnerer::Util.kill_process_set(cmdline, "tmp/pids/fe.#{fe_port}.pid",
                            cmdline_patterns, :verbose => false, :sleep_delay => 0.2)
       end
       
@@ -63,13 +63,13 @@ class RailsPwnage::App::ClusterConfig
   end
   
   def start(app_name, instance_name)
-    app_config = RailsPwnage::Config[app_name, instance_name]
+    app_config = RailsPwnerer::Config[app_name, instance_name]
     # silently die if the app was completely busted
     return unless app_config and File.exists? app_config[:app_path]
 
     app_path, pwnerer_user = app_config[:app_path], app_config[:pwnerer_user]
     pwnerer_group = group_for_username(pwnerer_user)    
-    frontends = RailsPwnage::Config.app_frontends(app_name, instance_name)
+    frontends = RailsPwnerer::Config.app_frontends(app_name, instance_name)
     first_port, environment = app_config[:port0], app_config[:environment]
 
     stop app_name, instance_name
@@ -78,7 +78,7 @@ class RailsPwnage::App::ClusterConfig
     if first_port == 0
       manage_ports app_name, instance_name, :alloc
       first_port = app_config[:port0]
-      RailsPwnage::App::NginxConfig.new.update app_name, instance_name
+      RailsPwnerer::App::NginxConfig.new.update app_name, instance_name
     end
     
     static_cmd = "thin start -a 127.0.0.1 -c #{app_path} -d -u #{pwnerer_user}" +
@@ -128,12 +128,12 @@ class RailsPwnage::App::ClusterConfig
   end
   
   def control_all(action)
-    RailsPwnage::Config.all_applications.each do |ai|
+    RailsPwnerer::Config.all_applications.each do |ai|
       case action
       when :start
-        RailsPwnage::App::ClusterConfig.new.start ai[0], ai[1]
+        RailsPwnerer::App::ClusterConfig.new.start ai[0], ai[1]
       when :stop
-        RailsPwnage::App::ClusterConfig.new.stop ai[0], ai[1]        
+        RailsPwnerer::App::ClusterConfig.new.stop ai[0], ai[1]        
       end
     end 
   end  

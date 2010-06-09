@@ -1,11 +1,11 @@
 # builds the nginx configuration
 
-class RailsPwnage::App::NginxConfig
-  include RailsPwnage::Base
+class RailsPwnerer::App::NginxConfig
+  include RailsPwnerer::Base
     
   # writes the nginx configuration for this server
   def config_nginx(app_name, instance_name)
-    app_config = RailsPwnage::Config[app_name, instance_name]
+    app_config = RailsPwnerer::Config[app_name, instance_name]
     first_port = app_config[:port0]
     
     # Can be specified as comma-separated string or array.
@@ -18,12 +18,12 @@ class RailsPwnage::App::NginxConfig
     default_app_port = app_config[:ssl_key] ? 443 : 80
     app_port = app_config[:port] || default_app_port
     
-    nginx_config = File.join(RailsPwnage::Config.path_to(:nginx_configs),
+    nginx_config = File.join(RailsPwnerer::Config.path_to(:nginx_configs),
                              app_name + '.' + instance_name) 
     File.open(nginx_config, 'w') do |f|
       # link to the frontends
       f << "  upstream #{app_name}_#{instance_name} {\n"
-      RailsPwnage::Config.app_frontends(app_name, instance_name).times do |instance|
+      RailsPwnerer::Config.app_frontends(app_name, instance_name).times do |instance|
         f << "    server 127.0.0.1:#{first_port + instance};\n"
       end
       f << "  }\n\n"
@@ -68,13 +68,13 @@ NGINX_CONFIG
   end
   
   def remove_nginx_config(app_name, instance_name)
-    nginx_config = File.join(RailsPwnage::Config.path_to(:nginx_configs), app_name + '.' + instance_name) 
+    nginx_config = File.join(RailsPwnerer::Config.path_to(:nginx_configs), app_name + '.' + instance_name) 
     File.delete nginx_config if File.exists? nginx_config    
   end
   
   # removes the default configuration stub (so nginx doesn't stumble upon it)
   def remove_nginx_stub
-    stub_file = File.join(RailsPwnage::Config.path_to(:nginx_configs), 'default')
+    stub_file = File.join(RailsPwnerer::Config.path_to(:nginx_configs), 'default')
     File.delete stub_file  if File.exists?(stub_file)
   end
   

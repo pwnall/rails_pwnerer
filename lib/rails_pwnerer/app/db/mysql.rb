@@ -2,12 +2,12 @@
 
 require 'yaml'
 
-class RailsPwnage::App::Database
-  include RailsPwnage::Base
+class RailsPwnerer::App::Database
+  include RailsPwnerer::Base
 
   # creates/drops the mysql database for the application
   def admin_database(app_name, instance_name, action = :create)
-    app_config = RailsPwnage::Config[app_name, instance_name]
+    app_config = RailsPwnerer::Config[app_name, instance_name]
     # exit and don't complain if the app is busted
     return unless app_config and File.exists? app_config[:app_path]
 
@@ -34,8 +34,8 @@ ENDSQL
       
       # run it
       File.open('admin_db.sql', 'w') { |f| f.write sql_commands }
-      dbroot_name = RailsPwnage::Config[:host][:dbroot_name]
-      dbroot_pass = RailsPwnage::Config[:host][:dbroot_pass]
+      dbroot_name = RailsPwnerer::Config[:host][:dbroot_name]
+      dbroot_pass = RailsPwnerer::Config[:host][:dbroot_pass]
       dbpass_arg = dbroot_pass.empty? ? '' : "-p#{dbroot_pass}"
       system "mysql -u#{dbroot_name} #{dbpass_arg} < admin_db.sql"
       
@@ -67,7 +67,7 @@ ENDSQL
     
   # configures rails to use the database in the production environment
   def configure_rails(app_name, instance_name)
-    app_config = RailsPwnage::Config[app_name, instance_name]
+    app_config = RailsPwnerer::Config[app_name, instance_name]
     db_name, db_user, db_pass = app_config[:db_name], app_config[:db_user], app_config[:db_pass]
     
     config_file = File.join app_config[:app_path], 'config', 'database.yml'
@@ -89,7 +89,7 @@ ENDSQL
   
   # migrates the database to the latest schema version
   def migrate_database(app_name, instance_name)
-    Dir.chdir RailsPwnage::Config[app_name, instance_name][:app_path] do
+    Dir.chdir RailsPwnerer::Config[app_name, instance_name][:app_path] do
       # now migrate the database
       system "rake db:migrate RAILS_ENV=production"
     end
@@ -97,7 +97,7 @@ ENDSQL
   
   # creates a database dump in the backup area
   def dump_database(app_name, instance_name)
-    app_config = RailsPwnage::Config[app_name, instance_name]
+    app_config = RailsPwnerer::Config[app_name, instance_name]
     db_name, db_user, db_pass = app_config[:db_name], app_config[:db_user], app_config[:db_pass]
 
     pwnerer_user = app_config[:pwnerer_user]
@@ -118,7 +118,7 @@ ENDSQL
   
   # loads the latest database dump from the backup area
   def load_database(app_name, instance_name)
-    app_config = RailsPwnage::Config[app_name, instance_name]
+    app_config = RailsPwnerer::Config[app_name, instance_name]
     db_name, db_user, db_pass = app_config[:db_name], app_config[:db_user], app_config[:db_pass]
     
     Dir.chdir app_config[:backup_path] do

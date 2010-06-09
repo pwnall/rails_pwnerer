@@ -1,7 +1,7 @@
 # configures sshd for tunneling (Facebook apps anyone?)
 
-class RailsPwnage::Scaffolds::Sshd
-  include RailsPwnage::Base
+class RailsPwnerer::Scaffolds::Sshd
+  include RailsPwnerer::Base
     
   # runner
   def run

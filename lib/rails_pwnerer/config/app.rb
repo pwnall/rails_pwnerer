@@ -1,6 +1,6 @@
 # application-specific configuration functions
 
-module RailsPwnage::Config
+module RailsPwnerer::Config
   # the name of the database storing an app's configuration
   def self.app_db_name(app_name, instance_name)
     return "#{app_name}.#{instance_name}"

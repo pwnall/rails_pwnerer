@@ -1,4 +1,4 @@
-module RailsPwnage::Base   
+module RailsPwnerer::Base   
   # initializes the module in UNIX mode
   def self._setup_unix
     #SUDO_PREFIX = 'sudo '

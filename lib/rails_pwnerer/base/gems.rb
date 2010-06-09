@@ -1,6 +1,6 @@
 # extends Base with gem-related functions
 
-module RailsPwnage::Base
+module RailsPwnerer::Base
   # TODO: use the Gem API instead of the command line
 
   def install_gem(gem_name)
@@ -50,7 +50,7 @@ module RailsPwnage::Base
   end
 end
 
-module RailsPwnage::Base  
+module RailsPwnerer::Base  
   def install_gems(gem_names)
     unroll_collection(gem_names) { |n| install_gem(n) }
   end

@@ -1,18 +1,18 @@
-module RailsPwnage  
+module RailsPwnerer
 end
 
-module RailsPwnage::App  
+module RailsPwnerer::App  
 end
 
-module RailsPwnage::Config  
+module RailsPwnerer::Config  
 end
 
-module RailsPwnage::Scaffolds
+module RailsPwnerer::Scaffolds
 end
 
 
-require 'pwnage/base.rb'
-require 'pwnage/base/atomics.rb'
+require 'rails_pwnerer/base.rb'
+require 'rails_pwnerer/base/atomics.rb'
 require 'rails_pwnerer/base/cpus.rb'
 require 'rails_pwnerer/base/dirs.rb'
 require 'rails_pwnerer/base/gems.rb'

@@ -4,7 +4,7 @@ require 'digest/md5'
 require 'fileutils'
 require 'yaml'
 
-module RailsPwnage::Base
+module RailsPwnerer::Base
   # reads the content of one file
   # returns nil if the file is corrupted, otherwise returns [file data, timestamp]
   def atomic_read_internal(file_name)

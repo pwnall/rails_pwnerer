@@ -1,10 +1,10 @@
 # runs custom scripts on app events
 
-class RailsPwnage::App::Scripts
-  include RailsPwnage::Base
+class RailsPwnerer::App::Scripts
+  include RailsPwnerer::Base
   
   def run_script(app_name, instance_name, script_name)
-    app_config = RailsPwnage::Config[app_name, instance_name]    
+    app_config = RailsPwnerer::Config[app_name, instance_name]    
     pwnerer_user = app_config[:pwnerer_user]
     pwnerer_uid = uid_for_username(pwnerer_user)
     pwnerer_gid = gid_for_username(pwnerer_user)
@@ -70,7 +70,7 @@ class RailsPwnage::App::Scripts
   end
 
   def control_all(action)
-    RailsPwnage::Config.all_applications.each do |ai|
+    RailsPwnerer::Config.all_applications.each do |ai|
       run_script ai[0], ai[1], (case action
       when :pre_start then 'pre_start'
       when :post_start then 'post_start'

@@ -1,7 +1,7 @@
 # hooks up the dynamic dns service
 
-class RailsPwnage::Scaffolds::HookDyndns
-  include RailsPwnage::Base
+class RailsPwnerer::Scaffolds::HookDyndns
+  include RailsPwnerer::Base
 
   # patches the ddclient boot script and configuration to enable the daemon
   def enable_daemon      
@@ -16,7 +16,7 @@ class RailsPwnage::Scaffolds::HookDyndns
   
   # configures ddclient
   def configure(ddns_hostname, ddns_username, ddns_password)
-    File.open(RailsPwnage::Config.path_to(:ddclient_config), 'w') do |f|
+    File.open(RailsPwnerer::Config.path_to(:ddclient_config), 'w') do |f|
       f << <<END_CONFIG
 pid=/var/run/ddclient.pid
 use=web, web=checkip.dyndns.com/, web-skip='IP Address'

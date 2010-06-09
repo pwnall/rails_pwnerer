@@ -1,20 +1,20 @@
 # sets up the configuration repository
 
-class RailsPwnage::Scaffolds::Config
-  include RailsPwnage::Base
+class RailsPwnerer::Scaffolds::Config
+  include RailsPwnerer::Base
 
   # runner
   def run
     # paths    
-    paths_db = RailsPwnage::Config.create_db :paths
+    paths_db = RailsPwnerer::Config.create_db :paths
     # the directory containing the nginx config files
     paths_db[:nginx_configs] = '/etc/nginx/sites-enabled'
     # the directory containing the ddclient configuration
     paths_db[:ddclient_config] = '/etc/ddclient.conf'
-    RailsPwnage::Config.flush_db :paths
+    RailsPwnerer::Config.flush_db :paths
     
     # host info    
-    host_info = RailsPwnage::Config.create_db :host
+    host_info = RailsPwnerer::Config.create_db :host
     # the default instance name -- DNS names have dashes, but mySQL hates that
     host_info[:instance] = Socket.gethostname().split('.').first.gsub('-', '_')
     # the computer's name (if we ever do status reports)
@@ -26,10 +26,10 @@ class RailsPwnage::Scaffolds::Config
     # the user owning the /prod subtrees
     host_info[:pwnerer_user] = current_user
     
-    RailsPwnage::Config.flush_db :host    
+    RailsPwnerer::Config.flush_db :host    
     
     # the free port list
-    RailsPwnage::Config.init_ports    
+    RailsPwnerer::Config.init_ports    
   end
 
   # standalone runner

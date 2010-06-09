@@ -5,14 +5,14 @@ require 'fileutils'
 require 'pathname'
 require 'set'
 
-class RailsPwnage::App::Perforce
-  include RailsPwnage::Base
+class RailsPwnerer::App::Perforce
+  include RailsPwnerer::Base
   
   # TODO(costan): figure out how to remove unused files in perforce and do it
     
   # remove any files not in client workspace
   def cleanup_app_dir(app_name, instance_name, target_dir, app_name_is_dir = false)
-    path_base = app_name_is_dir ? app_name : RailsPwnage::Config[app_name, instance_name][:app_path]
+    path_base = app_name_is_dir ? app_name : RailsPwnerer::Config[app_name, instance_name][:app_path]
     path_base = File.join path_base, target_dir
     path_base = path_base[0...-1] if path_base[-1] == '/'
     Dir.chdir path_base do
@@ -41,7 +41,7 @@ class RailsPwnage::App::Perforce
   # clean up the application directory by removing caches 
   def cleanup_app_caches(app_name, instance_name, app_name_is_dir = false)
     # TODO: this is almost-duplicated in git.rb -- pull up somewhere
-    app_path = app_name_is_dir ? app_name : RailsPwnage::Config[app_name, instance_name][:app_path]
+    app_path = app_name_is_dir ? app_name : RailsPwnerer::Config[app_name, instance_name][:app_path]
     return unless File.exists?(File.join(app_path, '.p4clientspec'))
     
     # TODO: learn how Rails caches work and kill those too
@@ -73,7 +73,7 @@ class RailsPwnage::App::Perforce
   end
     
   def perforce_update(app_name, instance_name)    
-    Dir.chdir RailsPwnage::Config[app_name, instance_name][:app_path] do
+    Dir.chdir RailsPwnerer::Config[app_name, instance_name][:app_path] do
       perforce_config_file
       
       print "Doing Perforce sync...\n"
@@ -85,7 +85,7 @@ class RailsPwnage::App::Perforce
   end
 
   def checkout(remote_path, app_name, instance_name)
-    app_path = RailsPwnage::Config[app_name, instance_name][:app_path]
+    app_path = RailsPwnerer::Config[app_name, instance_name][:app_path]
     
     # paths look like p4://user@depot:port/path/to/application
     path_regexp = /^p4\:\/\/([^\@\/]*\@)?([^\:\/]*)(:[1-9]+)?\/(.*)$/
@@ -127,7 +127,7 @@ END_SETTINGS
     end
 
     print "Creating Perforce client...\n"
-    Dir.chdir RailsPwnage::Config[app_name, instance_name][:app_path] do    
+    Dir.chdir RailsPwnerer::Config[app_name, instance_name][:app_path] do    
       success = Kernel.system "p4 client -i < .p4clientspec"
       if !success
         Kernel.system "p4 client -i < .p4clientspec" if try_prompting_for_perforce_password
@@ -142,7 +142,7 @@ END_SETTINGS
   end
   
   def update(app_name, instance_name)
-    app_path = RailsPwnage::Config[app_name, instance_name][:app_path]
+    app_path = RailsPwnerer::Config[app_name, instance_name][:app_path]
     return unless File.exists?(File.join(app_path, '.p4clientspec'))
     
     # TODO: maybe backup old version before issuing the p4 sync?
@@ -152,19 +152,19 @@ END_SETTINGS
   end
   
   def update_prefetch(app_name, instance_name)
-    app_path = RailsPwnage::Config[app_name, instance_name][:app_path]
+    app_path = RailsPwnerer::Config[app_name, instance_name][:app_path]
     return unless File.exists?(File.join(app_path, '.p4clientspec'))
     
     # TODO: maybe figure out a way to prefetch Perforce, if it's ever worth it
   end
   
   def remove(app_name, instance_name)
-    app_path = RailsPwnage::Config[app_name, instance_name][:app_path]
+    app_path = RailsPwnerer::Config[app_name, instance_name][:app_path]
     return unless File.exists?(File.join(app_path, '.p4clientspec'))
     
     
     print "Deleting Perforce client...\n"
-    Dir.chdir RailsPwnage::Config[app_name, instance_name][:app_path] do    
+    Dir.chdir RailsPwnerer::Config[app_name, instance_name][:app_path] do    
       p4_config = File.read perforce_config_file
       client_match = /^P4CLIENT=(.*)$/.match p4_config
       p4_client = client_match[1]

@@ -1,10 +1,10 @@
 # sets up the application gems
 
-class RailsPwnage::App::Gems
-  include RailsPwnage::Base
+class RailsPwnerer::App::Gems
+  include RailsPwnerer::Base
   
   def update(app_name, instance_name)
-    app_config = RailsPwnage::Config[app_name, instance_name]
+    app_config = RailsPwnerer::Config[app_name, instance_name]
     
     Dir.chdir app_config[:app_path] do
       # Phase 1: app-directed install

@@ -1,7 +1,7 @@
 require 'pp'
 
-class RailsPwnage::DevExecutor
-  include RailsPwnage::Base
+class RailsPwnerer::DevExecutor
+  include RailsPwnerer::Base
   
   def read_config(instance)
     if instance == '*'

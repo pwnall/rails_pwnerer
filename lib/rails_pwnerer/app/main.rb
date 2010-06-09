@@ -1,11 +1,11 @@
-module RailsPwnage::App
+module RailsPwnerer::App
   # internal method implementing magic instance names
   def self.instance_magic(app_name, instance_name)
     case instance_name
     when '*'
-      RailsPwnage::Config.all_instances app_name { |i| yield app_name, i }
+      RailsPwnerer::Config.all_instances app_name { |i| yield app_name, i }
     when '.'
-      yield app_name, RailsPwnage::Config[:host][:instance]
+      yield app_name, RailsPwnerer::Config[:host][:instance]
     else
       yield app_name, instance_name
     end
@@ -119,7 +119,7 @@ module RailsPwnage::App
         when :db_console
           Files.new.manage app, instance, action
         when :db_reset
-          app_config = RailsPwnage::Config[app, instance]
+          app_config = RailsPwnerer::Config[app, instance]
           unless app_config[:enable_db_reset]
             print "Database resets are disabled for this instance.\n"
             print "If you truly want to reset, add the :enable_db_reset configuration key.\n"

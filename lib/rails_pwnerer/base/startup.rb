@@ -2,7 +2,7 @@
 
 require 'fileutils'
 
-module RailsPwnage::Base
+module RailsPwnerer::Base
   # TODO: make this work w/o initd (OSX, Windows)
 
    # returns the filesystem path to a boot script

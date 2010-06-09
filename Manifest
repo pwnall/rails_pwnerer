@@ -8,7 +8,6 @@ bin/rpwn
 bin/rpwnctl
 bin/rpwndev
 ext/rpwn_setup_notice/extconf.rb
-ext/rpwn_setup_notice/rpwn_setup_notice.dll
 lib/rails_pwnerer.rb
 lib/rails_pwnerer/app/cluster_config.rb
 lib/rails_pwnerer/app/config.rb

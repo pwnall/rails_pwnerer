@@ -1,7 +1,7 @@
 # installs the required OS (read: Ubuntu) packages
 
-class RailsPwnage::Scaffolds::MysqlConfig
-  include RailsPwnage::Base
+class RailsPwnerer::Scaffolds::MysqlConfig
+  include RailsPwnerer::Base
 
   # runner
   def run

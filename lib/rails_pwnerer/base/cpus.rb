@@ -44,7 +44,7 @@ else
   
 end
 
-module RailsPwnage::Base
+module RailsPwnerer::Base
   # returns information for each core in the system
   def cpu_cores
     cpus = []

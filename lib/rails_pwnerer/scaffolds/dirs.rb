@@ -2,13 +2,13 @@
 
 require 'fileutils'
 
-class RailsPwnage::Scaffolds::Dirs
-  include RailsPwnage::Base
+class RailsPwnerer::Scaffolds::Dirs
+  include RailsPwnerer::Base
 
   # runner
   def run
     Dir.chdir('/') do
-      [:config,  :apps, :backups].map { |k| RailsPwnage::Config.path_to k }.each do |path|
+      [:config,  :apps, :backups].map { |k| RailsPwnerer::Config.path_to k }.each do |path|
         FileUtils.mkpath path
       end
     end

@@ -7,7 +7,7 @@ rescue Exception
   # no highline... tough luck
 end
 
-module RailsPwnage::Base
+module RailsPwnerer::Base
   def prompt_user_for_password(prompt, fail_prompt)
     unless defined?(HighLine)
       print "#{fail_prompt}\n"

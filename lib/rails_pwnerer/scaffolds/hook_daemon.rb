@@ -1,7 +1,7 @@
 # sets up rpwnctl (controlling the yet-to-be-written daemon) to startup at boot time
 
-class RailsPwnage::Scaffolds::HookDaemon
-  include RailsPwnage::Base
+class RailsPwnerer::Scaffolds::HookDaemon
+  include RailsPwnerer::Base
     
   # runner
   def run

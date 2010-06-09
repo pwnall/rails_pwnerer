@@ -1,7 +1,7 @@
 require 'pp'
 
-class RailsPwnage::Executor
-  include RailsPwnage::Scaffolds
+class RailsPwnerer::Executor
+  include RailsPwnerer::Scaffolds
   
   # standalone runner
   def run(args)
@@ -51,24 +51,24 @@ class RailsPwnage::Executor
     when 'install', 'micro'
       svn_path = args[1]
       instance_name = args[2] || '.'
-      RailsPwnage::App.install svn_path, instance_name
+      RailsPwnerer::App.install svn_path, instance_name
       
     when 'update', 'ubermicro'
       app_name = args[1]
       instance_name = args[2] || '.'
-      RailsPwnage::App.update app_name, instance_name
+      RailsPwnerer::App.update app_name, instance_name
       
     when 'uninstall', 'remove'
       app_name = args[1]
       instance_name = args[2] || '.'
-      RailsPwnage::App.remove app_name, instance_name
+      RailsPwnerer::App.remove app_name, instance_name
       
     when 'go'
       case args[1]
       when 'live', 'pwn'
-        RailsPwnage::App.control_all :start
+        RailsPwnerer::App.control_all :start
       when 'down', 'panic'
-        RailsPwnage::App.control_all :stop
+        RailsPwnerer::App.control_all :stop
       else
         print "Unrecognized go command #{args[1]}\n"
       end
@@ -76,41 +76,41 @@ class RailsPwnage::Executor
     when 'backup', 'checkpoint', 'save'
       app_name = args[1]
       instance_name = args[2] || '.'
-      RailsPwnage::App.manage app_name, instance_name, :checkpoint
+      RailsPwnerer::App.manage app_name, instance_name, :checkpoint
     when 'restore', 'rollback'
       app_name = args[1]
       instance_name = args[2] || '.'
-      RailsPwnage::App.manage app_name, instance_name, :rollback
+      RailsPwnerer::App.manage app_name, instance_name, :rollback
     when 'restoredb', 'rollbackdb', 'restore_db', 'rollback_db'
       app_name = args[1]
       instance_name = args[2] || '.'
-      RailsPwnage::App.manage app_name, instance_name, :rollback_db
+      RailsPwnerer::App.manage app_name, instance_name, :rollback_db
     when 'console'
       app_name = args[1]
       instance_name = args[2] || '.'
-      RailsPwnage::App.manage app_name, instance_name, :console
+      RailsPwnerer::App.manage app_name, instance_name, :console
     when 'dbconsole', 'db_console'
       app_name = args[1]
       instance_name = args[2] || '.'
-      RailsPwnage::App.manage app_name, instance_name, :db_console
+      RailsPwnerer::App.manage app_name, instance_name, :db_console
     when 'dbreset', 'db_reset', 'resetdb', 'reset_db'
       app_name = args[1]
       instance_name = args[2] || '.'
-      RailsPwnage::App.manage app_name, instance_name, :db_reset
+      RailsPwnerer::App.manage app_name, instance_name, :db_reset
     when 'rekey'
       app_name = args[1]
       instance_name = args[2] || '.'
-      RailsPwnage::App.manage app_name, instance_name, :rekey
+      RailsPwnerer::App.manage app_name, instance_name, :rekey
      
     when 'showconfig', 'configshow', 'show_config', 'config_show', 'showconf'
       if args.length < 2
         # dump all databases
-        RailsPwnage::Config.databases.each do |db|
+        RailsPwnerer::Config.databases.each do |db|
           print "Database: #{db}\n"          
-          pp RailsPwnage::Config[db] 
+          pp RailsPwnerer::Config[db] 
         end
       else
-        pp RailsPwnage::Config[args[1]]             
+        pp RailsPwnerer::Config[args[1]]             
       end     
     else
       print "Unrecognized command #{args[0]}\n"

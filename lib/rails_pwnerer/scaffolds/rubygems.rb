@@ -1,8 +1,8 @@
 require 'fileutils'
 require 'net/http'
 
-class RailsPwnage::Scaffolds::RubyGems
-  include RailsPwnage::Base
+class RailsPwnerer::Scaffolds::RubyGems
+  include RailsPwnerer::Base
   
   # retrieves the URI for a Google "I'm Feeling Lucky" search
   def google_lucky_uri(query)

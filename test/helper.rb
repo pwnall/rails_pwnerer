@@ -4,7 +4,7 @@ require 'test/unit'
 require 'rails_pwnerer'
 
 require 'rubygems'
-require 'flexmock'
+require 'flexmock/test_unit'
 
 
 # Shell class for including RailsPwnerer::Base.

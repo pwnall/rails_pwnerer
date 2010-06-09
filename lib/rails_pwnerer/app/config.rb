@@ -1,8 +1,8 @@
 # syncs the app's internal configuration with the configuration database
 require 'yaml'
 
-class RailsPwnage::App::Config
-  include RailsPwnage::Base
+class RailsPwnerer::App::Config
+  include RailsPwnerer::Base
   
   def random_db_password
     (0...16).map { |i| "abcdefghijklmnopqrstuvwxyz"[rand(26),1]}.join
@@ -13,12 +13,12 @@ class RailsPwnage::App::Config
   # update: this adds keys that might have been added in new versions of rpwn
   def populate_defaults(app_name, instance_name, app_db)
     # the path to application main files
-    app_db[:app_path] = File.join(RailsPwnage::Config.path_to(:apps), app_name + '.' + instance_name)
+    app_db[:app_path] = File.join(RailsPwnerer::Config.path_to(:apps), app_name + '.' + instance_name)
     # the path to application backups
-    app_db[:backup_path] ||= File.join(RailsPwnage::Config.path_to(:backups), app_name + '.' + instance_name)
+    app_db[:backup_path] ||= File.join(RailsPwnerer::Config.path_to(:backups), app_name + '.' + instance_name)
         
     # the user which will receive the "keys" to the production system 
-    app_db[:pwnerer_user] ||= RailsPwnage::Config[:host][:pwnerer_user]
+    app_db[:pwnerer_user] ||= RailsPwnerer::Config[:host][:pwnerer_user]
     # the number of frontends for the application instance
     app_db[:frontends] ||= 4 # most computers have 2 cores nowadays
     # the number of frontends per core for the application instance
@@ -52,19 +52,19 @@ class RailsPwnage::App::Config
 
   # allocates room for the application and creates the application configuration database
   def alloc(app_name, instance_name)
-    app_db_name = RailsPwnage::Config.app_db_name(app_name, instance_name)
-    app_db = RailsPwnage::Config.create_db app_db_name
+    app_db_name = RailsPwnerer::Config.app_db_name(app_name, instance_name)
+    app_db = RailsPwnerer::Config.create_db app_db_name
     populate_defaults app_name, instance_name, app_db
     
     FileUtils.mkpath app_db[:app_path]
         
-    RailsPwnage::Config.flush_db app_db    
+    RailsPwnerer::Config.flush_db app_db    
     return app_db[:app_path]
   end
       
   # pushes config changes from the application file to the database
   def update(app_name, instance_name)
-    app_config = RailsPwnage::Config[app_name, instance_name]
+    app_config = RailsPwnerer::Config[app_name, instance_name]
     
     db_name, db_user, db_pass = app_config[:db_name], app_config[:db_user], app_config[:db_pass]
     app_config.clear
@@ -95,16 +95,16 @@ class RailsPwnage::App::Config
     # TODO: if database settings changed, the database should be moved (re-created or re-keyed)
     if db_pass != app_config[:db_pass]
       db_pass = random_db_password if !db_pass || db_pass.empty?
-      RailsPwnage::App::Database.new.manage app_name, instance_name, :rekey
+      RailsPwnerer::App::Database.new.manage app_name, instance_name, :rekey
     end
     
-    RailsPwnage::Config.flush_db RailsPwnage::Config.app_db_name(app_name, instance_name)
+    RailsPwnerer::Config.flush_db RailsPwnerer::Config.app_db_name(app_name, instance_name)
   end
   
   def manage(app_name, instance_name, action)    
     case action
     when :rekey
-      app_config = RailsPwnage::Config[app_name, instance_name]
+      app_config = RailsPwnerer::Config[app_name, instance_name]
       app_config[:db_pass] = random_db_password
     end
   end
@@ -114,7 +114,7 @@ class RailsPwnage::App::Config
   end
   
   def remove(app_name, instance_name)
-    app_db_name = RailsPwnage::Config.app_db_name(app_name, instance_name)
-    RailsPwnage::Config.drop_db app_db_name
+    app_db_name = RailsPwnerer::Config.app_db_name(app_name, instance_name)
+    RailsPwnerer::Config.drop_db app_db_name
   end
 end
