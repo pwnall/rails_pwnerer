@@ -11,3 +11,15 @@ require 'flexmock/test_unit'
 class BaseWrapper
   include RailsPwnerer::Base
 end
+
+
+# Flexmock refuses to mock Kernel.` so we need to trick it.
+module Kernel
+  class <<self
+    alias_method :backquote, "`"
+    
+    def `(*args)
+      backquote(*args)
+    end
+  end
+end

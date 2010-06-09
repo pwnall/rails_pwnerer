@@ -52,4 +52,42 @@ class BasePackageTest < Test::Unit::TestCase
     assert @base.search_packages(package).empty?,
            "with_new_package_source didn't clean up after itself"
   end
+  
+  def test_update_package_metadata
+    command = "DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical DEBCONF_TERSE=yes  apt-get update -qq -y "
+    flexmock(Kernel).should_receive(:system).with(command).and_return(true)
+    assert @base.update_package_metadata
+  end
+  
+  def test_update_package_metadata_with_blocking_proxy
+    command = "DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical DEBCONF_TERSE=yes  apt-get update -qq -y "
+    flexmock(Kernel).should_receive(:system).with(command).and_return(false)
+    command2 = "DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical DEBCONF_TERSE=yes  apt-get update -qq -y -o Acquire::http::Proxy=false"
+    flexmock(Kernel).should_receive(:system).with(command2).and_return(true)
+    assert @base.update_package_metadata
+  end
+
+  def test_update_package_metadata_without_network
+    command = "DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical DEBCONF_TERSE=yes  apt-get update -qq -y "
+    flexmock(Kernel).should_receive(:system).with(command).and_return(false)
+    command2 = "DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical DEBCONF_TERSE=yes  apt-get update -qq -y -o Acquire::http::Proxy=false"
+    flexmock(Kernel).should_receive(:system).with(command2).and_return(false)
+    assert !@base.update_package_metadata
+  end
+  
+  def test_install_package
+    command = "DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical DEBCONF_TERSE=yes  apt-get install -qq -y  woot"
+    flexmock(Kernel).should_receive(:system).with(command).and_return(true)
+    assert @base.install_package('woot')
+  end
+  
+  def test_install_package_from_sources
+    c1 = "DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical DEBCONF_TERSE=yes  apt-get build-dep -qq -y  woot"
+    flexmock(Kernel).should_receive(:system).with(c1).and_return(true)
+    c2 = "DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical DEBCONF_TERSE=yes  apt-get source -qq -b  woot"
+    flexmock(Kernel).should_receive(:system).with(c2).and_return(true)
+    c3 = "DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical DEBCONF_TERSE=yes  dpkg -i "
+    flexmock(Kernel).should_receive(:system).with(c3).and_return(true)
+    assert @base.install_package('woot', :source => true)    
+  end
 end

@@ -7,6 +7,42 @@ require 'shellwords'
 module RailsPwnerer::Base
   # TODO: this works for debian-only
 
+  # Installs a package.
+  # Returns true for success, false for failure.   
+  def install_package(package_name, options = {})
+    return true if install_package_impl(package_name, options)
+    if options[:source]
+      if options[:no_proxy]
+        install_package package_name, options.merge(:source => false)
+      else
+        install_package package_name, options.merge(:no_proxy => true)
+      end
+    else
+      return false unless options[:no_proxy]
+      install_package package_name, options.merge(:no_proxy => true)
+    end
+  end
+
+  # Internals for install_package.
+  def install_package_impl(package_name, options)
+    prefix, params = apt_params_for options
+    if options[:source]
+      with_temp_dir(:root => true) do
+        dep_cmd = "#{prefix} apt-get build-dep -qq -y #{params} #{package_name}"
+        return false unless Kernel.system(dep_cmd)
+        fetch_cmd = "#{prefix} apt-get source -qq -b #{params} #{package_name}"
+        return false unless Kernel.system(fetch_cmd)
+        deb_files = Dir.glob '*.deb', File::FNM_DOTMATCH
+        build_cmd = "#{prefix} dpkg -i #{deb_files.join(' ')}"
+        return false unless Kernel.system(build_cmd)
+      end
+    else
+      install_cmd = "#{prefix} apt-get install -qq -y #{params} #{package_name}"
+      return false unless Kernel.system(install_cmd)
+    end
+    return true
+  end
+  
   # Executes the given block in the context of having new package sources.
   #
   # Args:
@@ -52,6 +88,10 @@ module RailsPwnerer::Base
   end
     
   # Updates the metadata for all the packages.
+  #
+  # Options:
+  #   :skip_proxy:: if true, apt is instructed to bypass the proxy
+  #
   # Returns true for success, false if something went wrong. 
   def update_package_metadata(options = {})
     if update_package_metadata_impl(options)
@@ -60,21 +100,36 @@ module RailsPwnerer::Base
       return true
     end
     
-    if options[:no_proxy]
-      # out of alternatives
-      return false
-    else
-      # try bypassing proxy
-      return update_package_metadata(options.merge(:no_proxy => true))
-    end
+    return false if options[:skip_proxy]
+    update_package_metadata options.merge(:skip_proxy => true)
   end
   
-  #
+  # Internals for update_package_metadata.
   def update_package_metadata_impl(options)
-    apt_params = apt_params_for options
-    Kernel.system("apt-get update -qq -y #{apt_params} < /dev/null") ?
-       true :false
-  end  
+    prefix, params = apt_params_for options
+    Kernel.system("#{prefix} apt-get update -qq -y #{params}") ?
+        true : false
+  end
+  private :update_package_metadata_impl
+  
+  # Builds apt-get parameters for an option hash.
+  #
+  # Args:
+  #   options:: an option hash, as passed to install_package, update_package,
+  #             or update_package_metadata
+  #
+  # Returns prefix, args, where prefix is a prefix for the apt- command, and
+  # args is one or more command-line arguments.
+  def apt_params_for(options = {})
+    prefix = 'DEBIAN_FRONTEND=noninteractive '
+    prefix += 'DEBIAN_PRIORITY=critical '
+    prefix += 'DEBCONF_TERSE=yes '
+    
+    params = ""
+    params << "-o Acquire::http::Proxy=false" if options[:skip_proxy]
+    return prefix, params
+  end
+  private :apt_params_for
   
   # Package info for the best package matching a pattern or set of patterns.
   #
@@ -131,62 +186,6 @@ module RailsPwnerer::Base
     Hash[*(versions.flatten)]    
   end
   
-  # Builds apt-get parameters for a set of options.
-  def apt_params_for(options = {})
-    # try to make debconf shut up for the general case
-    # HACK: this getter has side-effects because it's used for
-    #       install_package_impl and update_package_impl, and they don't have
-    #       handy command-line flags for these options that we'd like
-    ENV['DEBIAN_FRONTEND'] = 'noninteractive'
-    ENV['DEBIAN_PRIORITY'] = 'critical'
-    ENV['DEBCONF_TERSE'] = 'yes'    
-    
-    params = ""
-    params << "-o Acquire::http::Proxy=false" if options[:no_proxy]
-  end
-  
-  def install_package_impl(package_name, options)
-    apt_params = apt_params_for options
-    if options[:source]
-      with_temp_dir(:root => true) do
-        Kernel.system "apt-get build-dep -y #{apt_params} #{package_name}"
-        return false unless $CHILD_STATUS.success?
-        Kernel.system "apt-get source -b  #{apt_params} #{package_name}"
-        return false unless $CHILD_STATUS.success?
-        deb_files = Dir.glob '*.deb', File::FNM_DOTMATCH
-        Kernel.system "dpkg -i #{deb_files.join(' ')}"
-        return false unless $CHILD_STATUS.success?
-      end
-    else
-      Kernel.system "apt-get install -y  #{apt_params} #{package_name}"
-      return false unless $CHILD_STATUS.success?
-    end
-    return true
-  end
-    
-  # Installs a package.
-  # Returns true for success, false for failure.   
-  def install_package(package_name, options = {})
-    return true if install_package_impl(package_name, options)
-    if options[:source]
-      if options[:no_proxy]
-        # already bypassing proxy, fall back to binary package
-        return install_package(package_name, options.merge(:source => false))
-      else
-        # try bypassing proxy
-        return install_package(package_name, options.merge(:no_proxy => true))
-      end
-    else
-      if options[:no_proxy]
-        # out of alternatives
-        return false
-      else
-        # 
-        return install_package(package_name, options.merge(:no_proxy => true))        
-      end
-    end
-  end
-
   def upgrade_package_impl(package_name, options)
     apt_params = apt_params_for options    
     Kernel.system "apt-get upgrade -y #{apt_params} #{package_name.nil ? '' : package_name}"
