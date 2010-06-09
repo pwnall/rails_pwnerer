@@ -1,0 +1,3 @@
+module RailsPwnage::Config
+
+end

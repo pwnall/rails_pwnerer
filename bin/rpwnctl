@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+#
+### BEGIN INIT INFO
+# Provides:          rpwn
+# Required-Start:    $local_fs $syslog
+# Required-Stop:     $local_fs $syslog
+# Should-Start:      $remote_fs $network $named $time mysql nginx
+# Should-Stop:       $remote_fs $network $named $time mysql nginx
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Starts rails_pwnerer's control daemon
+# Description:       rails_pwnerer's control daemon configures and starts up
+#                    the Rails applications deployed on the machine.
+### END INIT INFO
+#
+
+require 'rubygems'
+require 'rails_pwnerer'
+
+# The debian checker wants to see LSB actions here. It can't comprehend that
+# we might launch another script. So, there, let's make it happy.
+# start stop restart force-reload reload status
+
+RailsPwnage::CtlExecutor.new.run ARGV

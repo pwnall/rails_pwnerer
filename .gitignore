@@ -1,0 +1,7 @@
+*~
+.loadpath
+ext/Makefile
+ext/*.dll
+ext/*.so
+pkg
+

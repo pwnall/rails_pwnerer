@@ -1,0 +1,197 @@
+I want this gem to be Pure Pwnage with Rails.
+
+I built +rails_pwnerer+ because I hate the messy process of putting a rails
+application into production. I don't enjoy following 10-page guides, so I'd
+much rather having ruby do that for me.
+
+Right now, +rails_pwnerer+ assumes a fresh Ubuntu 8.04 installation. You're
+welcome to test/update for other systems, and I'll be happy to merge patches,
+or add you to the RubyForge project. 
+
+
+Life without +rails_pwnerer+:
+
+Read a 20-page guide, and spend the better half of a day getting a box
+ready for production. You'll be frustrated in the process, but feel
+accomplished at the end. Assuming you don't do something wrong.
+
+Read a couple more 20-page guides, and learn to push newer versions
+of your application. You'll become lazy, and take shortcuts, like having 
+production passwords in the repository, or insecure file permissions, or
+you'll forget to delete cached javascripts and stylesheets from public/.
+I won't even mention backups. Or scripts to recover your frontends
+(mongrel / thin) properly from power outages. Or a staging server of your
+application.
+
+Life with +rails_pwnerer+:
+
+1) Install a bootstrap version of ruby and rubygems (yes the order is correct):
+sudo apt-get -y install rubygems ruby
+
+2) Install +rails_pwnerer+:
+sudo gem install rails_pwnerer
+(if it says gem not found, retry a couple of times)
+
+3) Get your server production-ready:
+sudo rpwn scaffold
+
+If this doesn't work, blame your OS distribution (rubygems was blocked
+from creating a wrapper for rpwn, and our cheat against common blocks failed).
+Manual workaround:
+
+a) Find the path to the gems: gem environment gemdir (e.g. /var/lib/gems/1.8/gems/)
+b) run bin/rpwn from there:
+sudo /var/lib/gems/1.8/bin/rpwn scaffold
+
+After you scaffold, you'll get good rubygems which put rpwn in your path.
+
+4) Install your application:
+sudo rpwn install svn+ssh://your.repository.host/path/to/your_application
+
+or
+
+sudo rpwn install you@your.repository.host/path/to/your_application.git
+
+or
+
+sudo rpwn install p4://you:yourpass@host:port/path/to/your/application
+
+5) Reboot, or start the services right away:
+sudo rpwn go live
+ 
+6) Maintain your application
+
+* Push the updates in the SVN repository:
+sudo rpwn update your_application
+
+* Create a backup:
+sudo rpwn backup your_application
+
+* Restore from the latest backup:
+sudo rpwn restore your_application
+
+* Restore the database (but not the application files) from the latest backup:
+sudo rpwn restore_db your_application
+
+* Poke around your application using the Rails console:
+rpwn console your_application
+
+* Poke around your database using the Rails console:
+rpwn db_console your_application
+
+* Configure DynDns for your application server
+sudo rpwn scaffold ddns full_host_name ddns_user ddns_password  
+
+* Change the database password
+sudp rpwn rekey your_application
+
+* Bring down all the applications (panic mode):
+sudo rpwn go down
+
+* Reset your database (drops and re-creates, useful in staging instances):
+sudo rpwn db_reset your_application
+(you need to read the next section on instances and configuration, and set
+the 'enable_db_reset' key on your staging instance)
+
+* Uninstall your application
+sudo rpwn uninstall your_application
+
+
+In love with +rails_pwnerer+:
+
+Got your first Rails app up with +rails_pwnerer+? Want more than
+one site on the production box? Want multiple instances of the same
+app (e.g. running a staging server on the same box)?
+
+Instances let you do that. Creating an instance:
+sudo rpwn install svn+ssh://whatever instance_name
+
+All the commands that take an application name take an optional
+instance name. If no name is given, the default is used (usually
+your host name, see below for finding it out). Use * to mean
+"every instance of that application". For instance:
+sudo rpwn update your_application *
+
++rails_pwnerer+ has a configuration repository (a bunch of YAML
+files) that you can see with:
+sudo rpwn showconfig
+
+Installing an application creates a default configuration
+database for the application. You can override defaults by
+creating some files in your application directory (so the
+overrides will be version-controlled). In your Rails directory
+(on your devbox), use rpwndev as follows:
+
+* Set the DNS name(s) that your app responds to:
+rpwndev set dns_name your.dns.name,www.your.dns.name
+
+* Tweak the number of frontends per CPU core for an instance:
+rpwndev setnum frontends_per_core 4 your_instance
+
+* Delete the previous tweak and apply it to all instances:
+rpwndev del frontends_per_core your_instance;
+rpwndev setnum frontends_per_core 4
+
+The overrides are YAML files in +config/rails_pwnage+, so you
+can view and edit them by hand. rpwndev is just a handy tool,
+because YAML files are easy to tweak, but hard to code from
+scratch without learning the format :)
+
+Once the overrides are pushed to your SVN repository, updating
+your app will apply the changes to the configuration repository.
+Use +rpwn showconfig+ on the server to see all the variables
+that you can tweak.
+
+Before I forget: don't use dots (.) in instance names. Think
+underscores (_) instead. You can use dots in application names,
+though.
+
+
+SSL servers with +rails_pwnerer+:
+
+1) Generate a server key:
+openssl req -new -newkey rsa:2048 -keyout config/rails_pwnerer/instance.pem -out instance.csr -nodes
+
+2) Be sure to set the CN (Common Name) to your server's DNS address. Send the 
+CSR file to your CA: cat instance.csr
+
+3) Copy the certificate into the +rails_pwnerer+ configuration directory:
+cat > config/rails_pwnerer/instance.cer
+
+4) Clean up: rm instance.csr
+
+5) Update the application in production: sudo rpwn update
+
+Hooked on +rails_pwnerer+:
+
+You're growing to complex applications which need daemons outside
+rails? +rails_pwnerer+ can invoke the scripts you provide at
+various points in the application lifecycle. Use this to start/stop
+processes, build indexes, or do any other task that doesn't fit in a
+Web request.
+
+The following prefixes are searched for in script/rails_pwnerer:
+* install - executed when an application is installed, after it is fully configured
+* pre_start - executed before the application is started
+* post_start - executed after the application is started
+* pre_stop - executed before the application is stopped
+* post_stop - executed after the application is stopped
+* pre_reset - executed before the application's database is reset
+* post_reset - executed after the application's database is reset
+* update - executed when the application is updated
+* remove - executed when the application is removed
+
+The first script matching the pattern is executed. This means you can
+have an "install.rb", so you can use your favorite language extension.
+You cannot have both an "install.rb" and an "install.sh" executing at
+the same time. 
+
+If the script ends in _su or _su.extension (e.g. _su.ruby), it will be
+run as the super-user (root). Otherwise it will be run as the
+application's user. For instance, post_reset_su.rb wil be run as the
+super-user, whereas post_reset.sh will not. 
+
+Writing your lifecycle scripts in Ruby? You can use the +rails_pwnerer+
+gem to commonly-used chunks of functionality . RailsPwnage::Util
+(including RailsPwnage::Base) is likely to be useful.
+ 

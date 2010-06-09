@@ -1,0 +1,205 @@
+v0.6.64. mysql is the default again. mysql2 still fails.
+
+v0.6.63. Bugfix in mysql / mysql2 choosing code bugfix.
+
+v0.6.62. Bugfix in mysql / mysql2 choosing code.
+
+v0.6.61. Smarter code for choosing between mysql and mysql2, since the latter is still buggy.
+
+v0.6.60. Switched Rails database adapter to mysql2.
+
+v0.6.59. Bugfix in pgsql scaffold code.
+
+v0.6.58. Added Gemfile to list of rpwn-changed files to be reverted on VCS ops.
+
+v0.6.57. Added posgresql client libraries to the scaffolding.
+
+v0.6.56. Added bundle locking, for safer deployments.
+
+v0.6.55. Fixed bug in dbconsole command.
+
+v0.6.54. Support Rails 3 applications.
+
+v0.6.53. Updated magic Google search string for RubyGems download location.
+
+v0.6.52. Added dependencies for Rails 3 to the set of scaffolded gems.
+
+v0.6.51. Added correct HTTP header for forwarded SSL connections.
+
+v0.6.50. SSL support in nginx configuration.
+
+v0.6.49. Re-added Ruby extension compiling support that somehow disappeared.
+
+v0.6.48. Added openssl and https support to ruby.
+
+v0.6.47. Updated nginx config because nginx complained.
+
+v0.6.46. Added a couple of useful development gems to the scaffold set.
+
+v0.6.45. Fixed typo in dpkg-dev Debian package name.
+
+v0.6.44. Git-based updates fetch repository before bringing app down.
+
+v0.6.43. Improved nginx settings for passing client IP through proxy.
+
+v0.6.42. Support for multiple DNS names.
+
+v0.6.41. Reduced output during scaffolding.
+
+v0.6.40. Added rake to the scaffold, so rails 2.3 can use it.
+
+v0.6.39. More permissive restore to allow moving data across instances.
+
+v0.6.38. Safer database backup parameters.
+
+v0.6.37. Added the curb gem and its lib dependency to the set of scaffolded gems.
+
+v0.6.36. Moved the LSB header from rpwn (how'd it get there?!) to rpwnctl.
+
+v0.6.35. Added db to the directories with application caches - it has schema.rb.
+
+v0.6.34. Fixed local data wiping for apps coming from git.
+
+v0.6.33. Fixed git installation when the production branch is master.
+
+v0.6.32. Fixed default instance names for DNS names with dashes.
+
+v0.6.31. Debian package installer tries to bypass proxy if necessary.
+
+v0.6.30. Fixed crash if the highline gem is not available.
+
+v0.6.29. Support for checking out from Perforce.
+
+v0.6.28. rpwndev can help add a Rails application tree to a version control repository.
+
+v0.6.27. Fixed cpu detection so it doesn't crash if neither sys-cpu nor procfs are available. 
+
+v0.6.26. Fixed local git configuration so updates work and don't wipe logs.
+
+v0.6.25. Fixed impedance in frontends computations in the nginx and thin managers.
+
+v0.6.24. Implemented support for checking out from git.
+
+v0.6.23. Implemented frontends_per_core option as an alternative to frontends.
+
+v0.6.22. Fixed package name for git.
+
+v0.6.21. Mass-upgrade to all packages at the end of scaffolding.
+
+v0.6.20. Redirecting apt-get and dpkg input to /dev/null to avoid install-time prompts from mysql and dyndns.
+
+v0.6.19. Added LSB header to rpwnctl. Using symbolic links instead of copying for init.d scripts so they can be upgraded.
+
+v0.6.18. Fixed bad log path in thin command line.
+
+v0.6.17. Doing svn revert on config/ on updates, so svn doesn't complain about conflicts.
+
+v0.6.16. Require enable_db_reset configuration flag for db_reset (dangerous operation).
+
+v0.6.15. Running hooks ending in _su as super-user. Fixed base bug that didn't reload nginx configs.
+
+v0.6.14. Cheating to get rpwn on the system path even on restrictive Debians.
+
+v0.6.12. Added hooks into the database reset operation.
+
+v0.6.11. Added option for resetting the database.
+
+v0.6.10. Doing svn cleanup in case svn update fails.
+
+v0.6.9. Re-keying the database on every update.
+
+v0.6.8. Added command for re-keying an app (changing the db user's password).
+
+v0.6.7. Tighter permissions around the configuration database files.
+
+v0.6.6. Bugfix in configuration update system: wasn't retaining database settings.
+
+v0.6.5. Faster killing in kill_process_set, plus now it honors the :verbose option.
+
+v0.6.4. Added configuration variable for the environment. Switched to a more determinstic config update model.
+
+v0.6.3. Bugfix: scaffolding "forgot" to install database gems.
+
+v0.6.2. Added port-based filterning, so there's no need for a CNAME for every app.
+
+v0.6.1. Added build-essential back into scaffolding, so gem installs work.
+
+v0.6.0. Replaced mongrel with thin, for better performance.
+
+v0.5.19. Bugfix: the nginx configuration is set up for static serving out of public/
+
+v0.5.18. Bugfix: removal scripts are called at the right time too.
+
+v0.5.17. Ability to call custom scripts during an app's lifecycle.
+
+v0.5.16. Letter-based database passwords (ruby's mysql doesn't like numbers).
+ 
+v0.5.15. Home-baked process info (in case Sys::Proctable doesn't work).
+
+v0.5.14. App-directed gem installation (because Rails 2.1.0 doesn't quite work yet).
+
+v0.5.13. Writable dirs are created if they didn't exist before.
+
+v0.5.12. Scaffolding sets up sshd for tunneling.
+
+v0.5.11. Added check for Rails application root on SVN checkout.
+
+v0.5.10. Fixed bug in nginx reconfiguration on startup.
+
+v0.5.9. Better method for locating gems.
+
+v0.5.8. Fixed crashing in base/process.rb when sys-proctable isn't there (scaffolding time). 
+
+v0.5.7. Better procedure for removing an instance.
+
+v0.5.6. Replaced mongrel_cluster startup script with our own. Now mongrels survive reboots.
+
+v0.5.5. Stronger database passwords, better mySQL configuration.
+
+v0.5.4. Bugfix release: the manifest was busted in 0.5.3.
+
+v0.5.3. Better control of mongrels using the process table and configuration database.
+
+v0.5.2. Extracts per-app and per-instance configuration from the application dir.
+
+v0.5.1. Application instances with per-instance configuration.
+
+v0.5.0. Implemented configuration repository.
+
+v0.4.19. Fixed bug in cleaning up application directory on SVN update.
+
+v0.4.18. Added explicit installation for sqlite3 packages (for CSAIL Debian).
+
+v0.4.17. OpenSSL not installed from source anymore, because it made Debian unhappy.
+
+v0.4.16. Implemented rubygems download and installation from source.
+
+v0.4.15. Moved temporary installation dirs to / so that it works on CSAIL Debian.
+
+v0.4.14. Fixed bug that completely broke new box scaffolding.
+
+v0.4.12. Added application gem management (new in Rails 2.1.0 apps).
+
+v0.4.11. Implemented installing from source.
+
+v0.4.10. Added gems needed to monitor system health.
+
+v0.4.9. Added app directory cleanup before backup.
+
+v0.4.8. Implemented app directory cleanup (removes cached .js and .css files) on 'update'. 
+
+v0.4.7. Actually implemented 'console'.
+
+v0.4.6. Implemented 'console' and 'scaffold ddns'. Bug fixes across the board. Removed with_dir, switched to block use of Dir.chdir.
+
+v0.4.5. Implemented 'restore'.
+
+v0.4. Implemented 'backup'.
+
+v0.3.5. Implemented 'go live' and 'go panic' to take all application processes up / down.
+
+v0.3. Supports 'update' to update application from svn. Still no configuration outside of config/main.rb.
+
+v0.2. Supports 'install' to install application from svn. No configuration outside of config/main.rb.
+
+v0.1. Initial release. Supports 'den00b' to setup the environment.

@@ -1,0 +1,25 @@
+Quickstart for Rubyforge:
+
+1) Checkout the rails_pwnage code
+svn co svn+ssh://your_user@rubyforge.org/var/svn/rails-pwnage/rails_pwnage
+
+2) Install the rubyforge gem
+gem install rubyforge
+
+3) Save your rubyforge.org login information
+rubyforge setup
+
+4) Get a login cookie
+rubyforge login
+
+5) Get project configuration from rubyforge
+rubyforge config rails-pwnage
+
+6) Create a package to release under
+rubyforge create_package rails-pwnage rails_pwnage
+
+7) Install the echoe gem (required for building this gem)
+gem install echoe
+
+8) Release the gem (finally!)
+rake release
