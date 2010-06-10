@@ -1,3 +1,5 @@
+v0.6.67. Binaries fixed to reference new (proper) namespace.
+
 v0.6.65. Tweaks and tests for package installation code.
 
 v0.6.64. mysql is the default again. mysql2 still fails.

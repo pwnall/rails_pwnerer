@@ -21,4 +21,4 @@ require 'rails_pwnerer'
 # we might launch another script. So, there, let's make it happy.
 # start stop restart force-reload reload status
 
-RailsPwnage::CtlExecutor.new.run ARGV
+RailsPwnerer::CtlExecutor.new.run ARGV

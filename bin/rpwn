@@ -3,4 +3,4 @@
 require 'rubygems'
 require 'rails_pwnerer'
 
-RailsPwnage::Executor.new.run ARGV
+RailsPwnerer::Executor.new.run ARGV
