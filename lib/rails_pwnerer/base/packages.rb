@@ -7,6 +7,18 @@ require 'shellwords'
 module RailsPwnerer::Base
   # TODO: this works for debian-only
 
+  # Installs a package matching a pattern or list of patterns.
+  #
+  # Args:
+  #   patterns:: same as for best_package_matching
+  #   options:: same as for install_package
+  #
+  # Returns true for success, false if something went wrong. 
+  def install_package_matching(patterns, options = {})
+    package_name = best_package_matching patterns
+    install_package package_name, options
+  end
+
   # Installs a package.
   #
   # Args:
@@ -166,8 +178,14 @@ module RailsPwnerer::Base
     patterns = [patterns] unless patterns.kind_of?(Enumerable)
     patterns.each do |pattern|
       packages = search_packages(pattern)
-      next if packages.empty?
-      best = packages.sort_by { |key, value| value }.last      
+      next if packages.empty?      
+      best = packages.sort_by { |key, value|
+        [
+          pattern.kind_of?(Regexp) ? ((key.index(pattern) == 0) ? 1 : 0) :
+              ((key == pattern) ? 1 : 0),
+          value.split(/[.-]/)
+        ]
+      }.last      
       return { :name => best.first, :version => best.last }
     end
     nil

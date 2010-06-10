@@ -1,3 +1,5 @@
+v0.6.65. Tweaks and tests for package installation code.
+
 v0.6.64. mysql is the default again. mysql2 still fails.
 
 v0.6.63. Bugfix in mysql / mysql2 choosing code bugfix.

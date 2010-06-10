@@ -3,94 +3,99 @@
 class RailsPwnerer::Scaffolds::Packages
   include RailsPwnerer::Base
   
-  # the packages needed to manage the server remotely and install applications
+  # Packages needed to manage the server remotely and install applications.
   def install_management
-    # needed to play with the configuration database
-    install_packages %w(debconf debconf-utils)
+    # Needed to play with the configuration database.
+    package 'debconf'
+    package 'debconf-utils'
     
-    # dpkg-dev allows building from source
-    # openssh-server allows us to ssh into the box
-    # build-essential is needed to install some gems
-    install_packages %w(dpkg-dev openssh-server build-essential)
-    
-    # subversion is needed to pull code from SVN repositories
-    # should work from source, except package author decided to block that
-    install_packages %w(subversion)
-    
-    # rpwn doesn't deal with git yet, but we'd like to offer that, so we'll
-    # bring in the git infrastructure during scaffolding
-    install_packages %w(git-core)
+    package 'dpkg-dev'  # Builds packages from source.
+    package 'openssh-server'  # SSH into the box.
 
-    # ddclient does dynamic DNS
-    # avahi-daemon does mDNS, a.k.a. Bonjour (makes "ping hostname.local" work)
-    install_packages %w(ddclient avahi-daemon)
+    # For gems with native extensions.
+    package 'build-essential'
+    package 'g++'
+    
+    # Pull code from version control.
+    package 'subversion'    
+    package 'git-core'
+
+    package 'avahi-daemon'  # mDNS, a.k.a. Bonjour
+    package 'ddclient'  # dynamic DNS
   end
   
-  # packages that are needed by popular gems
+  # Packages needed by popular gems.
   def install_tools
-    # needed by rmagick which does image processing
-    install_packages %w(libmagick9-dev libmagickwand-dev)
+    # For rmagick (image processing).
+    package 'libmagickwand-dev', /^libmagick\d*-dev$/
     
-    # needed by xml parsers
-    install_packages %w(libxml2-dev libxslt1-dev)
+    # For HTML/XML parsers (nokogiri, hpricot).
+    package 'libxml2-dev'
+    package 'libxslt1-dev'
     
-    # needed by curb which does HTTP fetching
-    install_packages %w(libcurl4-openssl-dev)
-    
-    # needed by sqlite-3 ruby gem in tools
-    install_packages %w(libsqlite3-0 libsqlite3-dev sqlite3)
-    
+    # For HTTP fetchers (curb).
+    package 'libcurl-dev', 'libcurl-openssl-dev', /^libcurl\d*-dev$/,
+            /^libcurl\d*-openssl-dev$/
+        
     # needed for solr and other java-based services
-    install_packages %w(openjdk-6-jdk)
+    package 'openjdk-6-jdk'
     
     # useful to be able to work with compressed data
-    install_packages %w(tar zip bzip2 gzip)
+    package 'bzip2'
+    package 'gzip'
+    package 'tar'
+    package 'zip'
   end
   
-  # the packages comprising ruby
+  # Packages for all the database servers we could need.
+  def install_databases
+    package 'sqlite3'
+    package 'libsqlite3-dev'
+        
+    package 'mysql-client'
+    package 'mysql-server'
+    package 'libmysql-dev', 'libmysqlclient-dev', /^libmysqlclient\d*-dev$/
+    
+    package 'postgresql-client'
+    package 'libpq-dev'
+    
+    # TODO: NoSQL stores.
+  end  
+  
+  # The ruby environment (ruby, irb, rubygems).
   def install_ruby
-    # Needed to install gems.
-    install_packages %w(build-essential g++)
-    
-    # NOTE: Not wiping ruby anymore, because a lot of stuff depends on it.
-    #       Hoping apt will replace it quietly.
-    # Wipe the old ruby version (and pray we don't die until we're done,
-    # otherwise we're on a ruby-less system)
+    package 'ruby', 'ruby1.8'
 
-    # remove_packages %w(ruby1.8 libruby1.8) -- this shouldn't be needed anymore
+    # Extensions that don't come in the ruby package, but should.
+    package 'libdbm-ruby', 'libdbm-ruby1.8'
+    package 'libgdm-ruby', 'libgdbm-ruby1.8'
+    package 'libopenssl-ruby', 'libopenssl-ruby1.8'
+    package 'libreadline-ruby', 'libreadline-ruby1.8'
+    package 'libsetup-ruby', 'libsetup-ruby1.8'
+
+    # Ecosystem command-line tools.
+    package 'irb', 'irb1.8'
+    package 'ruby-dev', 'ruby1.8-dev'
+    package 'rubygems', 'rubygems1.8'
     
-    # install ruby from source
-    install_packages %w(ruby1.8 libopenssl-ruby1.8 libreadline-ruby1.8 rdoc
-                        libsetup-ruby1.8 ruby-pkg-tools rubygems1.8 rubygems
-                        irb ruby1.8-dev)
+    # Debian package tool. Might be helpful if we decide to auto-convert
+    # gems into debian packages.
+    package 'ruby-pkg-tools'
+  end
+        
+  # Package for front-end servers.
+  def install_frontends
+    package 'nginx'
+    package 'varnish'
   end
   
-  # the packages for a mysql server and development libraries
-  def install_mysql
-    # not installing mySQL from source because it's a pain
-    install_packages %w(mysql-client mysql-server libmysqlclient15-dev)
-  end
-  
-  # The packages for building postgresql clients.
-  #
-  # Rails 3 likes having both the mysql and pgsql clients available.
-  def install_pgsql_client
-    install_packages %w(postgresql-client libpq-dev)    
-  end
-  
-  # the packages for sqlite3
-  def install_sqlite3
-    install_packages %w(libsqlite3 libsqlite3-dev sqlite3)
-  end
-  
-  # the packager for _the_ load balancer (nginx, from Russia with <3)
-  def install_balancer
-    remove_packages %w(nginx)
-    
-    install_packages %w(nginx)
+  # Implementation of the super-simple package DSL.
+  def package(*patterns)
+    install_package_matching patterns
   end
       
-  # runner
+
+  # Runner.
   def run
     sid_source = 'http://debian.mirrors.tds.net/debian/'
     sid_repos = %w(unstable main non-free contrib)
@@ -100,15 +105,13 @@ class RailsPwnerer::Scaffolds::Packages
     install_management
     with_package_source sid_source, sid_repos do
       install_tools
+      install_databases
       install_ruby
-      install_sqlite3
-      install_balancer
-      install_mysql
-      install_pgsql_client
+      install_frontends
     end
   end
 
-  # standalone runner
+  # Standalone runner.
   def self.go
     self.new.run
   end

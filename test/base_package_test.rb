@@ -22,10 +22,20 @@ class BasePackageTest < Test::Unit::TestCase
     flexmock(@base).should_receive(:search_packages).with('libmagick++9-dev').
                     and_return({})
     flexmock(@base).should_receive(:search_packages).with('libmagick9-dev').
-                    and_return({'first' => '9.1.9', 'second' => '9.0.9'})
+                    and_return('first' => '9.1.9', 'libmagick9-dev' => '9.0.9')
     patterns = ['libmagick++9-dev', 'libmagick9-dev']
-    golden = { :name => 'first', :version => '9.1.9' }
+    golden = { :name => 'libmagick9-dev', :version => '9.0.9' }
     assert_equal golden, @base.best_package_matching(patterns)
+  end
+  
+  def test_best_package_matching_regexp
+    flexmock(@base).should_receive(:search_packages).with(/ruby\d+-dev/).
+                    and_return('libruby18-dev' => '10.1.0',
+                               'ruby18-dev' => '1.8.6',
+                               'ruby187-dev' => '1.8.7')
+    patterns = /ruby\d+-dev/
+    golden = { :name => 'ruby187-dev', :version => '1.8.7' }
+    assert_equal golden, @base.best_package_matching(patterns)    
   end
 
   def test_best_package_matching_nothing
