@@ -1,3 +1,9 @@
+v0.6.71. Bugfix 2 for CPU enumeration in VM.
+
+v0.6.70. Bugfix for CPU enumeration in VM.
+
+v0.6.69. More tweaks in the debian package list.
+
 v0.6.68. Bugfix in untested package installation code, plus new test.
 
 v0.6.67. Binaries fixed to reference new (proper) namespace.

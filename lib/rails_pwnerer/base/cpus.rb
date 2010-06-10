@@ -52,9 +52,9 @@ module RailsPwnerer::Base
       cpus << {
           :freq => p.cpu_mhz.to_f,
           :id => p.processor.to_i,
-          :cpu => p.physical_id.to_i,
-          :core => p.core_id.to_i,
-          :num_cores => p.cpu_cores.to_i
+          :cpu => (p.respond_to?(:physical_id) ? p.physical_id.to_i : 0),
+          :core => (p.respond_to?(:core_id) ? p.core_id.to_i : 0),
+          :num_cores => (p.respond_to?(:cpu_cores) ? p.cpu_cores.to_i : 1)
       }
     end
     return cpus

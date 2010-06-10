@@ -4,59 +4,44 @@ class RailsPwnerer::Scaffolds::Gems
   include RailsPwnerer::Base
   
   def install_self
-    # need to reinstall self because ruby gets swapped while the gem is running
+    # The gem repository gets wiped on new Debian and Ubuntu installs, so we
+    # need to reinstall ourselves.
     install_gems %w(rails_pwnerer)
   end
   
-  def install_servers
-    install_gems %w(memcache-client rack rack-test rack-mount unicorn thin)
-  end
-  
-  def install_dbi
+  def install_databases
     install_gems %w(mysql mysql2 pg sqlite3-ruby)
-  end
-  
-  def install_text_tools
-    install_gems %w(tzinfo builder erubis mail text-format i18n)
+    install_gems %w(memcache-client)
   end
   
   def install_packagers
     install_gems %w(rake thor bundler)
   end
   
-  def install_tools
-    # we need this to do controlled app container startups
-    install_gems %w(sys-proctable)
-    
-    # used to determine the number of available CPUs and cores
-    install_gems %w(sys-cpu)
-    
-    # used to get version control passwords
+  def install_servers
+    install_gems %w(thin unicorn)
+  end
+  
+  def install_tools    
+    # Get passwords from admins.
     install_gems %w(highline termios)
 
-    # some code can use this instead of Net::HTTP and be faster
-    install_gems %w(curb)
+    # Debug gems on production machines.
+    install_gems %w(echoe jeweler ruby-debug ruby-debug-ide)
     
-    # some code can use one of these for XML / HTML parsing and be faster
-    install_gems %w(nokogiri hpricot)    
-    
-    # useful for building gems and debugging
-    install_gems %w(echoe ruby-debug-ide)
-        
-    # useful for development, testing, monitoring
-    install_gems %w(mechanize)
+    # Determine number of CPUs and cores.
+    install_gems %w(sys-cpu)
   end
   
   # runner
   def run
     update_gems
     install_self
-    install_dbi
+    install_databases
     install_packagers
-    install_text_tools
     install_servers
-    install_gems %w(rails)
     install_tools
+    install_gems %w(rails)
   end
   
   # standalone runner

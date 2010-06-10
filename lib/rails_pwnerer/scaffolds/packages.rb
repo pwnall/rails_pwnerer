@@ -9,6 +9,13 @@ class RailsPwnerer::Scaffolds::Packages
     package 'debconf'
     package 'debconf-utils'
     
+    # Keys for Debian packages.
+    package 'debian-archive-keyring'
+    
+    # Fetch files via HTTP.
+    package 'curl'
+    package 'wget'
+    
     package 'dpkg-dev'  # Builds packages from source.
     package 'openssh-server'  # SSH into the box.
 
@@ -64,6 +71,16 @@ class RailsPwnerer::Scaffolds::Packages
   
   # The ruby environment (ruby, irb, rubygems).
   def install_ruby
+    package = best_package_matching(['ruby1.8', 'ruby'])
+    if !package or package[:version] < '1.8.7'
+      # This distribution has an old ruby. Work around it.
+      deb_source = 'http://debian.mirrors.tds.net/debian/'
+      deb_repos = %w(testing main non-free contrib)
+      with_package_source deb_source, deb_repos do
+        install_ruby
+      end
+    end
+
     package 'ruby', 'ruby1.8'
 
     # Extensions that don't come in the ruby package, but should.
@@ -77,10 +94,6 @@ class RailsPwnerer::Scaffolds::Packages
     package 'irb', 'irb1.8'
     package 'ruby-dev', 'ruby1.8-dev'
     package 'rubygems', 'rubygems1.8'
-    
-    # Debian package tool. Might be helpful if we decide to auto-convert
-    # gems into debian packages.
-    package 'ruby-pkg-tools'
   end
         
   # Package for front-end servers.
@@ -97,18 +110,13 @@ class RailsPwnerer::Scaffolds::Packages
 
   # Runner.
   def run
-    sid_source = 'http://debian.mirrors.tds.net/debian/'
-    sid_repos = %w(unstable main non-free contrib)
-
     update_package_metadata
     update_all_packages
     install_management
-    with_package_source sid_source, sid_repos do
-      install_tools
-      install_databases
-      install_ruby
-      install_frontends
-    end
+    install_tools
+    install_databases
+    install_frontends
+    install_ruby
   end
 
   # Standalone runner.
