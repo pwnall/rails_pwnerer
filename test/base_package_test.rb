@@ -91,6 +91,12 @@ class BasePackageTest < Test::Unit::TestCase
     assert @base.install_package('hello')
   end
   
+  def test_install_package_matching
+    command = "env DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical DEBCONF_TERSE=yes  apt-get install -qq -y hello"
+    flexmock(Kernel).should_receive(:system).with(command).and_return(true)
+    assert @base.install_package_matching('hello')    
+  end
+  
   def test_install_package_from_sources
     c1 = "env DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical DEBCONF_TERSE=yes  apt-get build-dep -qq -y hello"
     flexmock(Kernel).should_receive(:system).with(c1).and_return(true)

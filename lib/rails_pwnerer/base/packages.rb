@@ -15,8 +15,8 @@ module RailsPwnerer::Base
   #
   # Returns true for success, false if something went wrong. 
   def install_package_matching(patterns, options = {})
-    package_name = best_package_matching patterns
-    install_package package_name, options
+    package = best_package_matching patterns    
+    package ? install_package(package[:name], options) : false
   end
 
   # Installs a package.
