@@ -37,14 +37,14 @@ class BasePackageTest < Test::Unit::TestCase
     assert_nil @base.best_package_matching(patterns)
   end
   
-  def test_with_new_package_source
+  def test_with_package_source
     package = 'nvidia-bl-dkms'
     assert @base.search_packages(package).empty?,
            "Found package that no test system should have (#{package})"
 
     source = 'http://ppa.launchpad.net/mactel-support/ppa/ubuntu'
     repos = ['lucid', 'main']
-    @base.with_new_package_source(source, repos) do
+    @base.with_package_source(source, repos) do
       assert !(@base.search_packages(package).empty?),
              "with_new_package_source didn't integrate the new source"
     end
@@ -54,40 +54,63 @@ class BasePackageTest < Test::Unit::TestCase
   end
   
   def test_update_package_metadata
-    command = "DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical DEBCONF_TERSE=yes  apt-get update -qq -y "
+    command = "env DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical DEBCONF_TERSE=yes  apt-get update -qq -y"
     flexmock(Kernel).should_receive(:system).with(command).and_return(true)
     assert @base.update_package_metadata
   end
   
   def test_update_package_metadata_with_blocking_proxy
-    command = "DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical DEBCONF_TERSE=yes  apt-get update -qq -y "
+    command = "env DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical DEBCONF_TERSE=yes  apt-get update -qq -y"
     flexmock(Kernel).should_receive(:system).with(command).and_return(false)
-    command2 = "DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical DEBCONF_TERSE=yes  apt-get update -qq -y -o Acquire::http::Proxy=false"
+    command2 = "env DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical DEBCONF_TERSE=yes  apt-get update -qq -y -o Acquire::http::Proxy=false"
     flexmock(Kernel).should_receive(:system).with(command2).and_return(true)
     assert @base.update_package_metadata
   end
 
   def test_update_package_metadata_without_network
-    command = "DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical DEBCONF_TERSE=yes  apt-get update -qq -y "
+    command = "env DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical DEBCONF_TERSE=yes  apt-get update -qq -y"
     flexmock(Kernel).should_receive(:system).with(command).and_return(false)
-    command2 = "DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical DEBCONF_TERSE=yes  apt-get update -qq -y -o Acquire::http::Proxy=false"
+    command2 = "env DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical DEBCONF_TERSE=yes  apt-get update -qq -y -o Acquire::http::Proxy=false"
     flexmock(Kernel).should_receive(:system).with(command2).and_return(false)
     assert !@base.update_package_metadata
   end
   
   def test_install_package
-    command = "DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical DEBCONF_TERSE=yes  apt-get install -qq -y  woot"
+    command = "env DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical DEBCONF_TERSE=yes  apt-get install -qq -y hello"
     flexmock(Kernel).should_receive(:system).with(command).and_return(true)
-    assert @base.install_package('woot')
+    assert @base.install_package('hello')
   end
   
   def test_install_package_from_sources
-    c1 = "DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical DEBCONF_TERSE=yes  apt-get build-dep -qq -y  woot"
+    c1 = "env DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical DEBCONF_TERSE=yes  apt-get build-dep -qq -y hello"
     flexmock(Kernel).should_receive(:system).with(c1).and_return(true)
-    c2 = "DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical DEBCONF_TERSE=yes  apt-get source -qq -b  woot"
+    c2 = "env DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical DEBCONF_TERSE=yes  apt-get source -b -qq -y hello"
     flexmock(Kernel).should_receive(:system).with(c2).and_return(true)
-    c3 = "DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical DEBCONF_TERSE=yes  dpkg -i "
+    c3 = "env DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical DEBCONF_TERSE=yes  dpkg -i "
     flexmock(Kernel).should_receive(:system).with(c3).and_return(true)
-    assert @base.install_package('woot', :source => true)    
+    assert @base.install_package('hello', :source => true)    
+  end
+  
+  def test_remove_package
+    command = "env DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical DEBCONF_TERSE=yes  apt-get remove -qq -y hello"
+    flexmock(Kernel).should_receive(:system).with(command).and_return(true)
+    assert @base.remove_package('hello')
+  end
+  
+  def test_install_remove_package_live
+    package = 'hello'
+    command = 'hello'
+    
+    assert !Kernel.system(command), 'You have hello installed by default?!'
+    assert @base.install_package(package), 'Package install failed'
+    assert Kernel.system(command), "Package installation didn't do the job"
+    assert @base.remove_package(package), 'Package removal failed'
+    assert !Kernel.system(command), "Package removal didn't do the job"
+  end
+  
+  def test_update_all_packages
+    command = "env DEBIAN_FRONTEND=noninteractive DEBIAN_PRIORITY=critical DEBCONF_TERSE=yes  apt-get upgrade -qq -y"
+    flexmock(Kernel).should_receive(:system).with(command).and_return(true)
+    assert @base.update_all_packages
   end
 end

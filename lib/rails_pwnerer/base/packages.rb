@@ -8,7 +8,15 @@ module RailsPwnerer::Base
   # TODO: this works for debian-only
 
   # Installs a package.
-  # Returns true for success, false for failure.   
+  #
+  # Args:
+  #   package_name:: the exact name of the package to be installed
+  #   options:: accepts the following:
+  #     :source:: if true, a source package is installed and built
+  #     :skip_proxy:: if true, apt is instructed to bypass any proxy that might
+  #                   be 
+  #
+  # Returns true for success, false if something went wrong. 
   def install_package(package_name, options = {})
     return true if install_package_impl(package_name, options)
     if options[:source]
@@ -22,22 +30,34 @@ module RailsPwnerer::Base
       install_package package_name, options.merge(:no_proxy => true)
     end
   end
+  
+  # Removes a package.
+  #
+  # Args:
+  #   package_name:: the exact name of the package to be installed
+  #
+  # Returns true for success, false if something went wrong. 
+  def remove_package(package_name, options = {})
+    prefix, params = apt_params_for options
+    del_cmd = "#{prefix } apt-get remove #{params} #{package_name}"
+    Kernel.system(del_cmd) ? true : false
+  end  
 
   # Internals for install_package.
   def install_package_impl(package_name, options)
     prefix, params = apt_params_for options
     if options[:source]
       with_temp_dir(:root => true) do
-        dep_cmd = "#{prefix} apt-get build-dep -qq -y #{params} #{package_name}"
+        dep_cmd = "#{prefix} apt-get build-dep #{params} #{package_name}"
         return false unless Kernel.system(dep_cmd)
-        fetch_cmd = "#{prefix} apt-get source -qq -b #{params} #{package_name}"
+        fetch_cmd = "#{prefix} apt-get source -b #{params} #{package_name}"
         return false unless Kernel.system(fetch_cmd)
         deb_files = Dir.glob '*.deb', File::FNM_DOTMATCH
         build_cmd = "#{prefix} dpkg -i #{deb_files.join(' ')}"
         return false unless Kernel.system(build_cmd)
       end
     else
-      install_cmd = "#{prefix} apt-get install -qq -y #{params} #{package_name}"
+      install_cmd = "#{prefix} apt-get install #{params} #{package_name}"
       return false unless Kernel.system(install_cmd)
     end
     return true
@@ -59,7 +79,7 @@ module RailsPwnerer::Base
   #
   # If the package source already exists, the given block is yielded without
   # making any changes to the package configuration. 
-  def with_new_package_source(source_url, source_repos = [], options = {})
+  def with_package_source(source_url, source_repos = [], options = {})
     source_prefix = options[:source] ? 'deb-src' : 'deb'
     source_patterns = [source_prefix, source_url] + source_repos    
     
@@ -85,7 +105,7 @@ module RailsPwnerer::Base
         update_package_metadata        
       end
     end
-  end
+  end  
     
   # Updates the metadata for all the packages.
   #
@@ -107,7 +127,7 @@ module RailsPwnerer::Base
   # Internals for update_package_metadata.
   def update_package_metadata_impl(options)
     prefix, params = apt_params_for options
-    Kernel.system("#{prefix} apt-get update -qq -y #{params}") ?
+    Kernel.system("#{prefix} apt-get update #{params}") ?
         true : false
   end
   private :update_package_metadata_impl
@@ -121,15 +141,15 @@ module RailsPwnerer::Base
   # Returns prefix, args, where prefix is a prefix for the apt- command, and
   # args is one or more command-line arguments.
   def apt_params_for(options = {})
-    prefix = 'DEBIAN_FRONTEND=noninteractive '
+    prefix = 'env DEBIAN_FRONTEND=noninteractive '
     prefix += 'DEBIAN_PRIORITY=critical '
     prefix += 'DEBCONF_TERSE=yes '
     
-    params = ""
-    params << "-o Acquire::http::Proxy=false" if options[:skip_proxy]
+    params = "-qq -y"
+    params += " -o Acquire::http::Proxy=false" if options[:skip_proxy]
     return prefix, params
   end
-  private :apt_params_for
+  private :apt_params_for  
   
   # Package info for the best package matching a pattern or set of patterns.
   #
@@ -186,47 +206,37 @@ module RailsPwnerer::Base
     Hash[*(versions.flatten)]    
   end
   
-  def upgrade_package_impl(package_name, options)
-    apt_params = apt_params_for options    
-    Kernel.system "apt-get upgrade -y #{apt_params} #{package_name.nil ? '' : package_name}"
-    return $CHILD_STATUS.success?
-  end
-  
   # Upgrades a package to the latest version.
   def upgrade_package(package_name, options = {})
     return install_package(package_name, options) if options[:source]
+    
     return true if upgrade_package_impl(package_name, options)
       
-    if options[:no_proxy]
-      # out of alternatives
-      return false
-    else
-      # 
-      return upgrade_package(package_name, options.merge(:no_proxy => true))        
-    end
-  end
-  
-  def upgrade_all_packages_impl(options)
-    apt_params = apt_params_for options    
-    Kernel.system "apt-get upgrade -y #{apt_params} < /dev/null"
-    return $CHILD_STATUS.success?
+    return false if options[:no_proxy]
+    upgrade_package package_name, options.merge(:no_proxy => true)
   end
 
-  def upgrade_all_packages(options = {})
-    return true if upgrade_all_packages_impl(options)
-    
-    if options[:no_proxy]
-      # out of alternatives
-      return false
-    else
-      # 
-      return upgrade_all_packages(options.merge(:no_proxy => true))
-    end
+  # Internals for upgrade_package.
+  def upgrade_package_impl(package_name, options)
+    prefix, params = apt_params_for options
+    update_cmd = "#{prefix} apt-get upgrade #{params} #{package_name}"
+    Kernel.system(update_cmd) ? true : false
   end
   
-  def remove_package(package_name, options = {})
-    system "apt-get remove -y #{package_name}" unless package_name.nil?      
+  # Upgrades all the packages on the system to the latest version.
+  def update_all_packages(options = {})
+    return true if update_all_packages_impl(options)
+    
+    return false if options[:no_proxy]
+    update_all_packages options.merge(:no_proxy => true)
   end  
+  
+  # Internals for upgrade_all_packages.
+  def update_all_packages_impl(options)
+    prefix, params = apt_params_for options    
+    success = Kernel.system "#{prefix} apt-get upgrade #{params}"
+    success ? true : false
+  end
 end
 
 module RailsPwnerer::Base  

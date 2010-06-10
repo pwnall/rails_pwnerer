@@ -92,18 +92,20 @@ class RailsPwnerer::Scaffolds::Packages
       
   # runner
   def run
-    add_package_source 'http://debian.mirrors.tds.net/debian/',
-          %w(unstable main non-free contrib)
-        
+    sid_source = 'http://debian.mirrors.tds.net/debian/'
+    sid_repos = %w(unstable main non-free contrib)
+
     update_package_metadata
+    update_all_packages
     install_management
-    install_tools
-    install_ruby
-    install_sqlite3
-    install_balancer
-    install_mysql
-    install_pgsql_client
-    upgrade_all_packages
+    with_package_source sid_source, sid_repos do
+      install_tools
+      install_ruby
+      install_sqlite3
+      install_balancer
+      install_mysql
+      install_pgsql_client
+    end
   end
 
   # standalone runner
