@@ -31,7 +31,12 @@ module RailsPwnerer::Base
   
   # executes a block in a temporary directory
   def with_temp_dir(options = {})
-    temp_dir = "#{options[:root] ? '/' : ''}rbpwn_#{(Time.now.to_f * 1000).to_i}"
+    base_dir = if options[:root]
+      File.exists?('/tmp') ? '/tmp' : '/'
+    else
+      './'
+    end
+    temp_dir = base_dir + "rbpwn_#{(Time.now.to_f * 1000).to_i}"
     Dir.mkdir temp_dir
     Dir.chdir(temp_dir) { yield }  
     FileUtils.rm_r temp_dir
