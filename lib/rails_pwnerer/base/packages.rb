@@ -218,7 +218,8 @@ module RailsPwnerer::Base
     output = Kernel.` "apt-cache search --full ."
     versions = output.split("\n\n").map(&:strip).reject(&:empty?).map { |info|
       info_hash = Hash[*(info.split(/\n(?=\w)/).
-                              map { |s| s.split(': ', 2) }.flatten)]
+                              map { |s| s.split(': ', 2) }.
+                              select { |kvp| kvp.length == 2 }.flatten)]
       [info_hash['Package'], info_hash['Version']]
     }
     Hash[*(versions.flatten)]    

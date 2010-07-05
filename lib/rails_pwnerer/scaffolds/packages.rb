@@ -82,6 +82,11 @@ class RailsPwnerer::Scaffolds::Packages
     end
 
     package 'ruby', 'ruby1.8'
+    
+    # Libraries needed to compile custom rubies.
+    package 'libssl-dev', /^libssl[0-9.]*-dev$/
+    package 'libreadline-dev', /^libreadline\d*-dev$/
+    package 'zlib-dev', /^zlib[0-9a-z]*-dev$/
 
     # Extensions that don't come in the ruby package, but should.
     package 'libdbm-ruby', 'libdbm-ruby1.8'
