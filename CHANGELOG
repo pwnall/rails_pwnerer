@@ -1,3 +1,5 @@
+v0.6.73. Update bundler commands for bundler 1.0.
+
 v0.6.72. More packages in the ruby scaffold.
 
 v0.6.71. Bugfix 2 for CPU enumeration in VM.
