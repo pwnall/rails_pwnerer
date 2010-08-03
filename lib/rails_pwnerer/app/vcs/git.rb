@@ -27,7 +27,7 @@ class RailsPwnerer::App::Git
   # reverts the config changes made by rpwn, so git fetch doesn't get confused
   def revert_config_changes(app_name, instance_name)
     Dir.chdir RailsPwnerer::Config[app_name, instance_name][:app_path] do
-      ['config', 'Gemfile'].each do |dir|
+      ['config', 'Gemfile', 'Gemfile.lock'].each do |dir|
         Kernel.system "git clean -d -f -x -- #{dir}"
         Kernel.system "git checkout -- #{dir}"
       end

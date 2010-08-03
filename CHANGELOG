@@ -1,3 +1,5 @@
+v0.6.74. Added Gemfile.lock to the list of files to be reset.
+
 v0.6.73. Update bundler commands for bundler 1.0.
 
 v0.6.72. More packages in the ruby scaffold.
