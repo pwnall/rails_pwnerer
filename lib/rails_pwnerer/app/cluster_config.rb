@@ -81,13 +81,13 @@ class RailsPwnerer::App::ClusterConfig
       RailsPwnerer::App::NginxConfig.new.update app_name, instance_name
     end
     
-    static_cmd = "thin start -a 127.0.0.1 -c #{app_path} -d -u #{pwnerer_user}" +
-                 " -g #{pwnerer_group} -e #{environment} "
+    static_cmd = "thin start -a 127.0.0.1 -c #{app_path} -u #{pwnerer_user}" +
+                 " -g #{pwnerer_group} -e #{environment} -d "
     
     # TODO: start the servers simultaneously
     Dir.chdir app_path do
       if File.exist? 'config.ru'
-        static_cmd << '-R config.ru ' 
+        static_cmd << '-R config.ru '
       else    
         static_cmd << '-A rails '
       end
