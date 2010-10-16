@@ -75,7 +75,7 @@ ENDSQL
     if !configuration['production'] or
        !configuration['production']['adapter'] or
        !(/mysql/ =~ configuration['production']['adapter'])
-      configuration['production']['adapter'] = 'mysql'
+      configuration['production']['adapter'] = 'mysql2'
     end
     configuration['production'].merge! 'database' => db_name, 'username' => db_user, 'password' => db_pass
     configuration['production'].merge! mysql_host_info()    
