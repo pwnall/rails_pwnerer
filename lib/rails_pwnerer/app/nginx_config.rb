@@ -32,7 +32,7 @@ class RailsPwnerer::App::NginxConfig
       f << <<NGINX_CONFIG
   server {
     listen #{app_port};
-    chatset utf-8;
+    charset utf-8;
     #{app_config[:ssl_key] ? 'ssl on;' : ''}
     #{app_config[:ssl_key] ? "ssl_certificate #{app_config[:ssl_cert]};" : ''}
     #{app_config[:ssl_key] ? "ssl_certificate_key #{app_config[:ssl_key]};" : ''}

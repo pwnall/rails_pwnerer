@@ -1,3 +1,7 @@
+v0.6.79. nginx typo fix.
+
+v0.6.78. UTF-8 in mysql configuration.
+
 v0.6.77. UTF-8 forced in nginx config.
 
 v0.6.76. Remove funky characters from application names.

@@ -72,11 +72,12 @@ ENDSQL
     
     config_file = File.join app_config[:app_path], 'config', 'database.yml'
     configuration = File.open(config_file, 'r') { |f| YAML.load f }
-    if !configuration['production'] or
-       !configuration['production']['adapter'] or
+    configuration['production'] ||= {}
+    if !configuration['production']['adapter'] or
        !(/mysql/ =~ configuration['production']['adapter'])
       configuration['production']['adapter'] = 'mysql2'
     end
+    configuration['production']['encoding'] ||= 'utf-8'
     configuration['production'].merge! 'database' => db_name, 'username' => db_user, 'password' => db_pass
     configuration['production'].merge! mysql_host_info()    
     File.open(config_file, 'w') { |f| YAML.dump(configuration, f) }
