@@ -18,7 +18,7 @@ class RailsPwnerer::App::Database
       case action
       when :create
       sql_commands = <<ENDSQL
-        CREATE DATABASE #{db_name};
+        CREATE DATABASE #{db_name} DEFAULT CHARSET=utf8;
         GRANT ALL ON #{db_name}.* TO '#{db_user}'@'localhost' IDENTIFIED BY '#{db_pass}' WITH GRANT OPTION;
 ENDSQL
       when :rekey
