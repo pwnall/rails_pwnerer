@@ -1,6 +1,7 @@
 module RailsPwnerer::App
   # internal method implementing magic instance names
   def self.instance_magic(app_name, instance_name)
+    app_name = app_name.gsub /\W/, ''  # Remove weird punctuation.    
     case instance_name
     when '*'
       RailsPwnerer::Config.all_instances app_name { |i| yield app_name, i }
@@ -16,6 +17,7 @@ module RailsPwnerer::App
     app_name = File.basename remote_path
     app_name = app_name[0, app_name.rindex('#')] if app_name.rindex '#'
     app_name = app_name[0, app_name.rindex('.')] if app_name.rindex '.'
+    app_name.gsub! /\W/, ''  # Remove weird punctuation.
     instance_magic(app_name, instance_name) do |app, instance|
       Config.new.alloc app, instance
       
@@ -43,7 +45,8 @@ module RailsPwnerer::App
   end
     
   # updates an application (restart servers if necessary)
-  def self.update(app_name, instance_name)    
+  def self.update(app_name, instance_name)
+    app_name = app_name.gsub /\W/, ''  # Remove weird punctuation.    
     instance_magic(app_name, instance_name) do |app, instance|
       [Git, Perforce, Svn].each do |mod|
         mod.new.update_prefetch app, instance
@@ -59,6 +62,7 @@ module RailsPwnerer::App
   
   # removes an application (and stops its servers)
   def self.remove(app_name, instance_name)    
+    app_name = app_name.gsub /\W/, ''  # Remove weird punctuation.    
     instance_magic(app_name, instance_name) do |app, instance|
       Scripts.new.pre_stop app, instance
       ClusterConfig.new.stop app, instance
