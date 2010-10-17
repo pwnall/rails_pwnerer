@@ -124,12 +124,6 @@ module RailsPwnerer::App
           Files.new.manage app, instance, action
         when :db_reset
           app_config = RailsPwnerer::Config[app, instance]
-          unless app_config[:enable_db_reset]
-            print "Database resets are disabled for this instance.\n"
-            print "If you truly want to reset, add the :enable_db_reset configuration key.\n"
-            return
-          end
-          
           self.update_app app, instance do
             Scripts.new.pre_reset app, instance
             Database.new.manage app, instance, action

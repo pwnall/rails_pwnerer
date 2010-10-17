@@ -1,3 +1,5 @@
+v0.6.81. Removed extra check for database resets. It just stands in the way.
+
 v0.6.80. UTF-8 when creating mysql databases.
 
 v0.6.79. nginx typo fix.
