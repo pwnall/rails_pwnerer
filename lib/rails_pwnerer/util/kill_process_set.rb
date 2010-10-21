@@ -1,3 +1,5 @@
+require 'zerg_support'
+
 module RailsPwnerer::Util
   # Complex procedure for killing a process or a bunch of process replicas
   # kill_command is the script that's supposed to kill the process / processes (tried first)
@@ -38,7 +40,7 @@ module RailsPwnerer::Util
         # avoid killing innocent victims
         if pinfo[pid].nil? or process_patterns.all? { |pattern| process_cmdline.index pattern } 
           print "Killing #{pid}: #{process_cmdline}\n" if options[:verbose]
-          Process.kill 'TERM', pid.to_i
+          kill_tree pid.to_i
         end
       rescue
         # just in case the file gets wiped before we see it
@@ -56,7 +58,7 @@ module RailsPwnerer::Util
     pinfo.each do |pid, info|
       next unless process_patterns.all? { |pattern| info[:cmdline].index pattern }
       print "Killing #{pid}: #{pinfo[pid][:cmdline]}\n" if options[:verbose]
-      Process.kill 'TERM', pid.to_i
+      kill_tree pid.to_i
     end
   end
 end

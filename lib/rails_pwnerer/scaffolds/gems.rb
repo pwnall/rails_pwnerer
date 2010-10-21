@@ -7,6 +7,9 @@ class RailsPwnerer::Scaffolds::Gems
     # The gem repository gets wiped on new Debian and Ubuntu installs, so we
     # need to reinstall ourselves.
     install_gems %w(rails_pwnerer)
+
+    # Process management.
+    install_gems %w(zerg_support)
   end
   
   def install_databases
