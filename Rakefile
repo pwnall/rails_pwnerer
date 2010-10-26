@@ -10,6 +10,7 @@ Echoe.new('rails_pwnerer') do |p|
   p.url = 'http://www.costan.us/rails_pwnage'
   p.dependencies = []
   p.development_dependencies = ['echoe', 'fakefs', 'flexmock']
+  p.runtime_dependencies = ['zerg_support']
   p.extension_pattern = ['ext/**/extconf.rb']
   p.eval = proc do |p|
     p.default_executable = 'bin/rpwn'
