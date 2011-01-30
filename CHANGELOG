@@ -1,3 +1,5 @@
+v0.6.84. Configured nginx to set cache headers for static files.
+
 v0.6.83. Added zerg_support dependency.
 
 v0.6.82. Switched to zerg_support for process management + mysql encoding bugfix.

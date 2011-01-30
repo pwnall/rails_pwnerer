@@ -41,13 +41,16 @@ class RailsPwnerer::App::NginxConfig
     client_max_body_size #{app_config[:max_request_mb]}M;
     location / {
       if (-f $request_filename) {
+        expires max;
         break;
       }
 
       if (-f $request_filename/index.html) {
+        expires max;
         rewrite (.*) $1/index.html break;
       }
       if (-f $request_filename.html) {
+        expires max;
         rewrite (.*) $1.html break;
       }
 
