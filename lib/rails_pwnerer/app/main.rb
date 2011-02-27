@@ -30,6 +30,9 @@ module RailsPwnerer::App
         [Config, Files, Gems, Database, ClusterConfig, NginxConfig, Scripts].each do |mod|
           mod.new.setup app, instance
         end
+        Scripts.new.pre_start app, instance
+        ClusterConfig.new.start app, instance
+        Scripts.new.post_start app, instance
       else
         if success == :next
           print "rails_pwange only supports git, subversion, and perforce at this time. \n"

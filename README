@@ -55,11 +55,8 @@ sudo rpwn install you@your.repository.host/path/to/your_application.git
 or
 
 sudo rpwn install p4://you:yourpass@host:port/path/to/your/application
-
-5) Reboot, or start the services right away:
-sudo rpwn go live
  
-6) Maintain your application
+5) Maintain your application
 
 * Push the updates in the SVN repository:
 sudo rpwn update your_application
@@ -87,6 +84,9 @@ sudp rpwn rekey your_application
 
 * Bring down all the applications (panic mode):
 sudo rpwn go down
+
+* Bring all the applications back up (out of panic mode):
+sudo rpwn go live
 
 * Reset your database (drops and re-creates, useful in staging instances):
 sudo rpwn db_reset your_application

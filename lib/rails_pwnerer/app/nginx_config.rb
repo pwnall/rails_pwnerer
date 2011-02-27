@@ -85,6 +85,7 @@ NGINX_CONFIG
   def setup(app_name, instance_name)
     config_nginx app_name, instance_name
     remove_nginx_stub
+    control_boot_script('nginx', :reload)
   end
   
   def update(app_name, instance_name)

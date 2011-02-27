@@ -1,3 +1,5 @@
+v0.6.86. Apps start right after they're installed.
+
 v0.6.85. Ignores bad configuration files in the application.
 
 v0.6.84. Configured nginx to set cache headers for static files.
