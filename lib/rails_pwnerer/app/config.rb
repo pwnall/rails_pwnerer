@@ -85,11 +85,15 @@ class RailsPwnerer::App::Config
       
       ["config/rails_pwnerer/.yml", "config/rails_pwnerer/#{instance_name}.yml"].each do |fname|
         next unless File.exists? fname
-        config_update = File.open(fname, 'r') { |f| YAML.load f }
+        config_update = File.open(fname, 'r') { |f| YAML.load f } rescue nil
+        unless config_update
+          print "Configuration file ignored due to parsing error - #{fname}\n"
+          config_update = {}
+        end
         config_update.each do |key, value|
           app_config[key] = value
         end
-      end      
+      end
     end
     
     # TODO: if database settings changed, the database should be moved (re-created or re-keyed)
