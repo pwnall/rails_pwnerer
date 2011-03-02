@@ -1,3 +1,5 @@
+v0.6.87. Added /etc/gemrc to stop wasting time building RDocs on servers.
+
 v0.6.86. Apps start right after they're installed.
 
 v0.6.85. Ignores bad configuration files in the application.

@@ -45,6 +45,13 @@ class RailsPwnerer::Scaffolds::RubyGems
     end   
   end
   
+  # sets up good defaults for Rubygems
+  def configure_rubygems
+    File.open("/etc/gemrc") do |f|
+      f.write "gem --no-force --no-rdoc --no-ri --no-user-install --wrappers\n"
+    end
+  end
+  
   def run
     # get the old path set by pre-go
     old_gems = @@old_gems
@@ -53,6 +60,9 @@ class RailsPwnerer::Scaffolds::RubyGems
     remove_packages %w(rubygems)
     install_rubygems
     
+    # configure rubygems so it doesn't waste time
+    configure_rubygems
+
     # patch Ubuntu's broken rubygems installation
     system "cp /usr/bin/gem1.8 /usr/bin/gem"    
     
