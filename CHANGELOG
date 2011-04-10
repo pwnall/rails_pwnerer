@@ -1,3 +1,5 @@
+v0.6.90. Workaround daemonz permission issue.
+
 v0.6.89. Restored compatibility with Rails 2 apps.
 
 v0.6.88. Use bundle exec when starting / stopping the app server.

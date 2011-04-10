@@ -35,7 +35,7 @@ module RailsPwnerer::App
         Scripts.new.post_start app, instance
       else
         if success == :next
-          print "rails_pwange only supports git, subversion, and perforce at this time. \n"
+          print "rails_pwange only supports git, subversion, and perforce at this time.\n"
         else
           print "You didn't checkout a Rails application. Check your remote path.\n"
         end
@@ -55,7 +55,7 @@ module RailsPwnerer::App
         mod.new.update_prefetch app, instance
       end
       update_app app, instance do
-        [Git, Perforce, Svn, Config, Gems, Database, Scripts].each do |mod|
+        [Git, Perforce, Svn, Config, Gems, Files, Database, Scripts].each do |mod|
           mod.new.update app, instance
         end
       end    

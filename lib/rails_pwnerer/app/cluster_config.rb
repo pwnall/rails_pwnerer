@@ -84,7 +84,8 @@ class RailsPwnerer::App::ClusterConfig
     end
     
     static_cmd = "thin start -a 127.0.0.1 -c #{app_path} -u #{pwnerer_user} " +
-                 "-g #{pwnerer_group} -e #{environment} -d "
+                 "-g #{pwnerer_group} -e #{environment} -d " +
+                 " --tag rpwn_#{app_name}.#{instance_name} "
     
     # TODO: start the servers simultaneously
     Dir.chdir app_path do

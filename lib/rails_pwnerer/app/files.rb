@@ -29,8 +29,8 @@ class RailsPwnerer::App::Files
       Dir.chdir 'tmp' do
         system "tar -czf ../#{dump_file} #{File.basename(app_path)}"
       end
-      File.chmod(400, dump_file)
-      File.chown(pwnerer_uid, pwnerer_gid, dump_file)
+      File.chmod 0400, dump_file
+      File.chown pwnerer_uid, pwnerer_gid, dump_file
       
       # clean up
       FileUtils.rm_r cold_copy
@@ -106,16 +106,33 @@ class RailsPwnerer::App::Files
       end      
     end
   end
+  
+  # Sets the right permissions on the application's working areas.
+  def fix_permissions(app_name, instance_name)
+    pwnerer_user = RailsPwnerer::Config[app_name, instance_name][:pwnerer_user]
+    pwnerer_uid = uid_for_username(pwnerer_user)
+    pwnerer_gid = gid_for_username(pwnerer_user)
+    
+    Dir.chdir(RailsPwnerer::Config[app_name, instance_name][:app_path]) do
+      ['tmp', 'public'].each do |subdir|
+        FileUtils.mkdir_p subdir unless File.exist?(subdir)
+        FileUtils.chmod_R 0775, subdir
+        FileUtils.chown_R pwnerer_uid, pwnerer_gid, subdir
+      end
+    end
+  end
 
   def setup(app_name, instance_name)
-    scaffold_backup(app_name, instance_name)
+    scaffold_backup app_name, instance_name
+    fix_permissions app_name, instance_name
+  end
+
+  def update(app_name, instance_name)
+    scaffold_backup app_name, instance_name
+    fix_permissions app_name, instance_name
   end
   
   def remove(app_name, instance_name)
     drop_files(app_name, instance_name)
-  end
-  
-  def update(app_name, instance_name)
-    scaffold_backup(app_name, instance_name)    
   end
 end
