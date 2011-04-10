@@ -53,7 +53,9 @@ class RailsPwnerer::App::ClusterConfig
       # TODO: stop processes in parallel
       frontends.times do |f|
         fe_port = first_port + f
-        cmdline = "thin stop -a 127.0.0.1 -p #{fe_port} -d -P tmp/pids/fe.#{fe_port}.pid"
+        cmdline = "thin stop -a 127.0.0.1 -p #{fe_port} -d " +
+                  "-P tmp/pids/fe.#{fe_port}.pid"
+        cmdline = 'bundle exec ' + cmdline if File.exist?('Gemfile')
         cmdline_patterns[1] = "(127.0.0.1:#{fe_port})"
         RailsPwnerer::Util.kill_process_set(cmdline, "tmp/pids/fe.#{fe_port}.pid",
                            cmdline_patterns, :verbose => false, :sleep_delay => 0.2)
@@ -81,8 +83,8 @@ class RailsPwnerer::App::ClusterConfig
       RailsPwnerer::App::NginxConfig.new.update app_name, instance_name
     end
     
-    static_cmd = "thin start -a 127.0.0.1 -c #{app_path} -u #{pwnerer_user}" +
-                 " -g #{pwnerer_group} -e #{environment} -d "
+    static_cmd = "thin start -a 127.0.0.1 -c #{app_path} -u #{pwnerer_user} " +
+                 "-g #{pwnerer_group} -e #{environment} -d "
     
     # TODO: start the servers simultaneously
     Dir.chdir app_path do
@@ -91,6 +93,7 @@ class RailsPwnerer::App::ClusterConfig
       else    
         static_cmd << '-A rails '
       end
+      static_cmd = 'bundle exec ' + static_cmd if File.exist?('Gemfile')
       
       frontends.times do |f|
         fe_port = first_port + f

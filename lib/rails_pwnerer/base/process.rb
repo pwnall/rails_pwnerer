@@ -21,7 +21,7 @@ module RailsPwnerer::Base
     end
   end
   
-  def kill_tree
+  def kill_tree(pid)
     Zerg::Support::Process.kill_tree pid
   end
 end

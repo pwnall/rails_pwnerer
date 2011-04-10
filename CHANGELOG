@@ -1,3 +1,7 @@
+v0.6.89. Restored compatibility with Rails 2 apps.
+
+v0.6.88. Use bundle exec when starting / stopping the app server.
+
 v0.6.87. Added /etc/gemrc to stop wasting time building RDocs on servers.
 
 v0.6.86. Apps start right after they're installed.
