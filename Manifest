@@ -9,6 +9,7 @@ bin/rpwnctl
 bin/rpwndev
 ext/rpwn_setup_notice/extconf.rb
 lib/rails_pwnerer.rb
+lib/rails_pwnerer/app/assets.rb
 lib/rails_pwnerer/app/cluster_config.rb
 lib/rails_pwnerer/app/config.rb
 lib/rails_pwnerer/app/db/mysql.rb

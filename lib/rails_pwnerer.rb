@@ -45,6 +45,7 @@ require 'rails_pwnerer/scaffolds/rubygems.rb'
 require 'rails_pwnerer/scaffolds/sshd.rb'
 
 require 'rails_pwnerer/app/main.rb'
+require 'rails_pwnerer/app/assets.rb'
 require 'rails_pwnerer/app/config.rb'
 require 'rails_pwnerer/app/cluster_config.rb'
 require 'rails_pwnerer/app/files.rb'

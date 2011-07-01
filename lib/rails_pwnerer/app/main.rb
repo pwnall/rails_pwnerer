@@ -27,7 +27,7 @@ module RailsPwnerer::App
         break unless success == :next
       end
       if success == :ok
-        [Config, Files, Gems, Database, ClusterConfig, NginxConfig, Scripts].each do |mod|
+        [Assets, Config, Files, Gems, Database, ClusterConfig, NginxConfig, Scripts].each do |mod|
           mod.new.setup app, instance
         end
         Scripts.new.pre_start app, instance
@@ -51,11 +51,11 @@ module RailsPwnerer::App
   def self.update(app_name, instance_name)
     app_name = app_name.gsub /\W/, ''  # Remove weird punctuation.    
     instance_magic(app_name, instance_name) do |app, instance|
-      [Git, Perforce, Svn].each do |mod|
+      [Assets, Git, Perforce, Svn].each do |mod|
         mod.new.update_prefetch app, instance
       end
       update_app app, instance do
-        [Git, Perforce, Svn, Config, Gems, Files, Database, Scripts].each do |mod|
+        [Git, Perforce, Svn, Assets, Config, Gems, Files, Database, Scripts].each do |mod|
           mod.new.update app, instance
         end
       end    

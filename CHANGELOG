@@ -1,3 +1,5 @@
+v0.6.91. Support for the asset pipeline in Rails 3.1.
+
 v0.6.90. Workaround daemonz permission issue.
 
 v0.6.89. Restored compatibility with Rails 2 apps.
