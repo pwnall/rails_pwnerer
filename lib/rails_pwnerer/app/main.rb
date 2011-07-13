@@ -27,7 +27,7 @@ module RailsPwnerer::App
         break unless success == :next
       end
       if success == :ok
-        [Assets, Config, Files, Gems, Database, ClusterConfig, NginxConfig, Scripts].each do |mod|
+        [Config, Gems, Assets, Files, Database, ClusterConfig, NginxConfig, Scripts].each do |mod|
           mod.new.setup app, instance
         end
         Scripts.new.pre_start app, instance
@@ -55,7 +55,7 @@ module RailsPwnerer::App
         mod.new.update_prefetch app, instance
       end
       update_app app, instance do
-        [Git, Perforce, Svn, Assets, Config, Gems, Files, Database, Scripts].each do |mod|
+        [Git, Perforce, Svn, Config, Gems, Assets, Files, Database, Scripts].each do |mod|
           mod.new.update app, instance
         end
       end    
