@@ -18,14 +18,22 @@ class RailsPwnerer::App::Assets
   # removes asset caches from the application directory 
   def cleanup_app_caches(app_name, instance_name)
     Dir.chdir RailsPwnerer::Config[app_name, instance_name][:app_path] do
-      Kernel.system "rake assets:clean RAILS_ENV=production"
+      if File.exist?('Gemfile')
+        Kernel.system 'bundle exec rake assets:clean RAILS_ENV=production'
+      else
+        Kernel.system 'rake assets:clean RAILS_ENV=production'
+      end
     end
   end
   
   # builds up the asset caches
   def build_app_caches(app_name, instance_name)
     Dir.chdir RailsPwnerer::Config[app_name, instance_name][:app_path] do
-      Kernel.system "rake assets:precompile RAILS_ENV=production"
+      if File.exist?('Gemfile')
+        Kernel.system 'bundle exec rake assets:precompile RAILS_ENV=production'
+      else
+        Kernel.system 'rake assets:precompile RAILS_ENV=production'
+      end
     end
   end
 end

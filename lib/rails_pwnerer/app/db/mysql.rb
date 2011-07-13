@@ -92,7 +92,11 @@ ENDSQL
   def migrate_database(app_name, instance_name)
     Dir.chdir RailsPwnerer::Config[app_name, instance_name][:app_path] do
       # now migrate the database
-      system "rake db:migrate RAILS_ENV=production"
+      if File.exist?('Gemfile')
+        Kernel.system 'bundle exec rake db:migrate RAILS_ENV=production'
+      else
+        Kernel.system 'rake db:migrate RAILS_ENV=production'
+      end
     end
   end
   
