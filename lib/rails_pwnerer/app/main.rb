@@ -99,7 +99,7 @@ module RailsPwnerer::App
         when :checkpoint
           ClusterConfig.new.manage app, instance, action
           Files.new.manage app, instance, action
-          self.update_app app, instance do          
+          self.update_app app, instance do
             Database.new.manage app, instance, action
           end
         when :rollback

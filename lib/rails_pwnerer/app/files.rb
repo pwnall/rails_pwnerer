@@ -13,6 +13,8 @@ class RailsPwnerer::App::Files
     dump_file = "files/#{app_name}.#{instance_name}_#{timestamp}.tar.gz"
     
     backup_path = RailsPwnerer::Config[app_name, instance_name][:backup_path]
+    scaffold_backup app_name, instance_name unless File.exist?(backup_path)
+    
     app_path = RailsPwnerer::Config[app_name, instance_name][:app_path]
     Dir.chdir backup_path do
       # create a cold copy of the application files
@@ -27,7 +29,7 @@ class RailsPwnerer::App::Files
       
       # pack and protect the cold copy
       Dir.chdir 'tmp' do
-        system "tar -czf ../#{dump_file} #{File.basename(app_path)}"
+        Kernel.system "tar -czf ../#{dump_file} ."
       end
       File.chmod 0400, dump_file
       File.chown pwnerer_uid, pwnerer_gid, dump_file
@@ -64,8 +66,9 @@ class RailsPwnerer::App::Files
     unless dump_file
       dump_file = Dir.glob(File.join(backup_path, "files/#{app_name}.*")).max
     end
-    restore_path = Pathname.new(File.join(app_path, '..')).cleanpath.to_s
-    Dir.chdir restore_path do
+    FileUtils.mkpath backup_path unless File.exists? app_path
+    File.chown(pwnerer_uid, pwnerer_gid, app_path)
+    Dir.chdir app_path do
       # find the latest dump and load it in
       system "tar -xzf #{dump_file}"
     end
@@ -84,7 +87,7 @@ class RailsPwnerer::App::Files
   def manage(app_name, instance_name, action)
     case action
     when :checkpoint
-      dump_files app_name, instance_name      
+      dump_files app_name, instance_name
     when :rollback
       drop_files app_name, instance_name
       load_files app_name, instance_name      

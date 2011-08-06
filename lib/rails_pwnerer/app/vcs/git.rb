@@ -22,7 +22,7 @@ class RailsPwnerer::App::Git
     'public/javascripts', 'public/stylesheets', 'script',
     'test', 'tmp', 'vendor',
     ].each { |dir| cleanup_app_dir app_name, instance_name, dir, app_name_is_dir }
-  end  
+  end
 
   # reverts the config changes made by rpwn, so git fetch doesn't get confused
   def revert_config_changes(app_name, instance_name)
