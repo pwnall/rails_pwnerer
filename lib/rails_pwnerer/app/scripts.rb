@@ -11,6 +11,7 @@ class RailsPwnerer::App::Scripts
         
     return unless app_path = app_config[:app_path]  
     
+    return unless File.exist?(app_config[:app_path])
     Dir.chdir app_path do
       script_file = Dir.glob(File.join('script/rails_pwnerer', script_name + '*')).first
       return if script_file.nil?

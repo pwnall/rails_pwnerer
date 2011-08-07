@@ -28,8 +28,8 @@ class RailsPwnerer::App::Files
       end
       
       # pack and protect the cold copy
-      Dir.chdir 'tmp' do
-        Kernel.system "tar -czf ../#{dump_file} ."
+      Dir.chdir cold_copy do
+        Kernel.system "tar -czf ../../#{dump_file} ."
       end
       File.chmod 0400, dump_file
       File.chown pwnerer_uid, pwnerer_gid, dump_file
@@ -66,8 +66,13 @@ class RailsPwnerer::App::Files
     unless dump_file
       dump_file = Dir.glob(File.join(backup_path, "files/#{app_name}.*")).max
     end
-    FileUtils.mkpath backup_path unless File.exists? app_path
+    FileUtils.mkdir_p app_path unless File.exists? app_path
+
+    pwnerer_user = RailsPwnerer::Config[app_name, instance_name][:pwnerer_user]
+    pwnerer_uid = uid_for_username(pwnerer_user)
+    pwnerer_gid = gid_for_username(pwnerer_user)
     File.chown(pwnerer_uid, pwnerer_gid, app_path)
+
     Dir.chdir app_path do
       # find the latest dump and load it in
       system "tar -xzf #{dump_file}"

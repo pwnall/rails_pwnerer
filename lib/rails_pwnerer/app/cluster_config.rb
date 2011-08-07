@@ -16,6 +16,7 @@ class RailsPwnerer::App::ClusterConfig
       writable_dirs += app_config[:writable_dirs].split ','
     end
     
+    return unless File.exist?(app_config[:app_path])
     Dir.chdir app_config[:app_path] do
       writable_dirs.each do |writable_dir|
         FileUtils.mkpath writable_dir unless File.exists? writable_dir
