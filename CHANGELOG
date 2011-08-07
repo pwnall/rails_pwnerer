@@ -1,3 +1,5 @@
+v0.6.98. Fixed various crashes when restoring a backup.
+
 v0.6.97. Allow "scaffold config" to run when a database already exists. 
 
 v0.6.96. Another bugfix in the rubygems configuration.
