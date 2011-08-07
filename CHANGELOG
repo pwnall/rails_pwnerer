@@ -1,3 +1,5 @@
+v0.6.94. Improvements to file backup logic. Breaking change in format :(
+
 v0.6.93. Better ordering of tasks upon app install and update.
 
 v0.6.92. Use 'bundle exec rake' instead of 'rake' for apps with a Gemfile.
