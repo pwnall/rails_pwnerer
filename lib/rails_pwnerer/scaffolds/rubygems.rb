@@ -48,7 +48,7 @@ class RailsPwnerer::Scaffolds::RubyGems
   # sets up good defaults for Rubygems
   def configure_rubygems
     File.open('/etc/gemrc', 'w') do |f|
-      f.write "gem --no-force --no-rdoc --no-ri --no-user-install --wrappers\n"
+      f.write "gem: --no-force --no-rdoc --no-ri --no-user-install --wrappers\n"
     end
   end
   
@@ -64,7 +64,7 @@ class RailsPwnerer::Scaffolds::RubyGems
     configure_rubygems
 
     # patch Ubuntu's broken rubygems installation
-    system "cp /usr/bin/gem1.8 /usr/bin/gem"    
+    Kernel.system "cp /usr/bin/gem1.8 /usr/bin/gem"
     
     # remove the gems that are trailing behind
     new_gems = File.dirname(File.dirname(path_to_gem('sources', '/lib/sources.rb')))
@@ -75,7 +75,7 @@ class RailsPwnerer::Scaffolds::RubyGems
   def preflight
     # save old lib path, in case we need to wipe it
     # we need to do this because setting up packages might wipe Ubuntu's gems
-    @@old_gems = File.dirname(File.dirname(path_to_gem('sources', '/lib/sources.rb')))        
+    @@old_gems = File.dirname(File.dirname(path_to_gem('sources', '/lib/sources.rb')))   
   end
   
   # called before packages get installed

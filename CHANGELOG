@@ -1,3 +1,5 @@
+v0.6.96. Another bugfix in the rubygems configuration.
+
 v0.6.95. Bugfix in rubygems configuration.
 
 v0.6.94. Improvements to file backup logic. Breaking change in format :(
