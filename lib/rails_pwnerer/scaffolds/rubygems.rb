@@ -47,7 +47,7 @@ class RailsPwnerer::Scaffolds::RubyGems
   
   # sets up good defaults for Rubygems
   def configure_rubygems
-    File.open("/etc/gemrc") do |f|
+    File.open('/etc/gemrc', 'w') do |f|
       f.write "gem --no-force --no-rdoc --no-ri --no-user-install --wrappers\n"
     end
   end
