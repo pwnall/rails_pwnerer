@@ -104,7 +104,7 @@ module RailsPwnerer::App
           end
         when :rollback
           self.update_app app, instance do
-            [Files, Database, Gems, ClusterConfig].each do |mod|
+            [Files, Gems, Database, ClusterConfig].each do |mod|
               mod.new.manage app, instance, action
             end
           end
