@@ -36,6 +36,12 @@ class RailsPwnerer::App::Gems
     end    
   end
 
+  def manage(app_name, instance_name, action)
+    # Called when an app is rolled back, to get the old gems reinstalled,
+    # if necessary.
+    update(app_name, instance_name)
+  end
+
   def setup(app_name, instance_name)
     update(app_name, instance_name)
   end
