@@ -39,9 +39,8 @@ module RailsPwnerer::Config
   # creates a new database
   def self.create_db(db_name)
     db_name = db_name.to_s
-    raise "Configuration database #{db_name} already exists" if get_db(db_name)
     
-    db_contents = install_db_hooks Hash.new, db_name
+    db_contents = install_db_hooks({}, db_name)
     @@db_cache[db_name] = db_contents
     @@db_dirty[db_name] = true
     flush_db db_name

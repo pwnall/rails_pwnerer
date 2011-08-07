@@ -13,7 +13,7 @@ class RailsPwnerer::Scaffolds::Gems
   end
   
   def install_databases
-    install_gems %w(mysql mysql2 pg sqlite3-ruby)
+    install_gems %w(mysql mysql2 pg sqlite3)
     install_gems %w(memcache-client)
   end
   

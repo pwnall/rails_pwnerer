@@ -26,7 +26,7 @@ class RailsPwnerer::Scaffolds::Config
     # the user owning the /prod subtrees
     host_info[:pwnerer_user] = current_user
     
-    RailsPwnerer::Config.flush_db :host    
+    RailsPwnerer::Config.flush_db :host
     
     # the free port list
     RailsPwnerer::Config.init_ports    
