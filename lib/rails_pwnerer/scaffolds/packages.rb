@@ -33,6 +33,9 @@ class RailsPwnerer::Scaffolds::Packages
   
   # Packages needed by popular gems.
   def install_tools
+    # For eventmachine.
+    package 'libssl-dev'
+    
     # For rmagick (image processing).
     package 'libmagickwand-dev', /^libmagick\d*-dev$/
     
