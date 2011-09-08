@@ -39,6 +39,14 @@ class RailsPwnerer::App::NginxConfig
     #{(dns_names.empty? ? '' : "server_name " + dns_names.join(' ') + ";")}
     root #{app_config[:app_path]}/public;
     client_max_body_size #{app_config[:max_request_mb]}M;
+    location ~* ^/assets/ {
+       gzip_static on;
+       expires max;
+       add_header Cache-Control public;
+       break;
+    }      
+    error_page 404 /404.html;
+    error_page 500 502 503 504 /500.html;
     location / {
       if (-f $request_filename) {
         expires max;

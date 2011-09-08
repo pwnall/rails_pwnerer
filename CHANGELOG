@@ -1,3 +1,5 @@
+v0.6.100. Nginx configuration for Rails 3.1 asset pipeline.
+
 v0.6.99. Reinstall gems when restoring an app from backup.
 
 v0.6.98. Fixed various crashes when restoring a backup.
