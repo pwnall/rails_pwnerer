@@ -51,6 +51,7 @@ class RailsPwnerer::Scaffolds::Packages
     package 'openjdk-6-jdk'
     
     # useful to be able to work with compressed data
+    package 'zlib-dev', /^zlib[0-9a-z]*-dev$/
     package 'bzip2'
     package 'gzip'
     package 'tar'
@@ -74,36 +75,49 @@ class RailsPwnerer::Scaffolds::Packages
   
   # The ruby environment (ruby, irb, rubygems).
   def install_ruby
-    package = best_package_matching(['ruby1.8', 'ruby'])
+    install_ruby_19 || install_ruby_18
+  end
+  
+  # MRI19 (1.9.2 or above).
+  def install_ruby_19(retry_with_repos = true)
+    package = best_package_matching(['ruby1.9.1'])
+    if !package or package[:version] < '1.9.2'
+      return false unless retry_with_repos
+      
+      # This distribution has an old ruby. Work around it.
+      deb_source = 'http://debian.mirrors.tds.net/debian/'
+      deb_repos = %w(testing main non-free contrib)
+      return_value = nil 
+      with_package_source deb_source, deb_repos do
+        return_value = install_ruby_19 false
+      end
+      return return_value
+    end
+    
+    package 'ruby1.9.1-full'
+    true
+  end
+  
+  # MRI18 (1.8.7 or above).
+  def install_ruby_18
+    package = best_package_matching(['ruby1.8-full'])
     if !package or package[:version] < '1.8.7'
       # This distribution has an old ruby. Work around it.
       deb_source = 'http://debian.mirrors.tds.net/debian/'
       deb_repos = %w(testing main non-free contrib)
+      return_value = nil 
       with_package_source deb_source, deb_repos do
-        install_ruby
+        return_value = install_ruby
       end
+      return return_value
     end
-
-    package 'ruby', 'ruby1.8'
     
-    # Libraries needed to compile custom rubies.
-    package 'libssl-dev', /^libssl[0-9.]*-dev$/
-    package 'libreadline-dev', /^libreadline\d*-dev$/
-    package 'zlib-dev', /^zlib[0-9a-z]*-dev$/
-
-    # Extensions that don't come in the ruby package, but should.
-    package 'libdbm-ruby', 'libdbm-ruby1.8'
-    package 'libgdm-ruby', 'libgdbm-ruby1.8'
-    package 'libopenssl-ruby', 'libopenssl-ruby1.8'
-    package 'libreadline-ruby', 'libreadline-ruby1.8'
-    package 'libsetup-ruby', 'libsetup-ruby1.8'
+    package 'ruby1.8-full', 'ruby-full'
 
     # Ecosystem command-line tools.
-    package 'irb', 'irb1.8'
-    package 'ruby-dev', 'ruby1.8-dev'
     package 'rubygems', 'rubygems1.8'
   end
-        
+          
   # Package for front-end servers.
   def install_frontends
     package 'nginx'
@@ -115,7 +129,6 @@ class RailsPwnerer::Scaffolds::Packages
     install_package_matching patterns
   end
       
-
   # Runner.
   def run
     update_package_metadata
