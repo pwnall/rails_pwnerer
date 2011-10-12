@@ -200,9 +200,19 @@ module RailsPwnerer::Base
   # Returns a hash where the keys are matching package names, and the values
   # are version numbers.
   def search_packages(pattern)
-    Hash[*(RailsPwnerer::Base.all_packages.select { |key, value|
+    packages = RailsPwnerer::Base.all_packages
+    Hash[packages.select { |key, value|
       pattern.kind_of?(Regexp) ? (pattern =~ key) : key.index(pattern)
-    }.flatten)]
+    }.map { |key, value|
+      # apt-cache search sometimes leaves version numbers out
+      # Update the cache with version numbers.
+      if value.nil?
+        info = RailsPwnerer::Base.package_info_hash(
+            Kernel.`("apt-cache show #{key}"))
+        packages[key] = value = info['Version']
+      end
+      [key, value]
+    }]
   end
 
   # A hash of all the packages in the system, associated with their versions.
@@ -217,12 +227,15 @@ module RailsPwnerer::Base
   def self.all_packages_without_caching
     output = Kernel.` "apt-cache search --full ."
     versions = output.split("\n\n").map(&:strip).reject(&:empty?).map { |info|
-      info_hash = Hash[*(info.split(/\n(?=\w)/).
-                              map { |s| s.split(': ', 2) }.
-                              select { |kvp| kvp.length == 2 }.flatten)]
+      info_hash = package_info_hash info
       [info_hash['Package'], info_hash['Version']]
     }
     Hash[*(versions.flatten)]    
+  end
+  
+  def self.package_info_hash(output)
+    Hash[output.split(/\n(?=\w)/m).map { |s| s.split(': ', 2) }.
+                select { |kvp| kvp.length == 2 }]
   end
   
   # Upgrades a package to the latest version.

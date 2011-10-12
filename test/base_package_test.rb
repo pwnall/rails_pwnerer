@@ -15,7 +15,7 @@ class BasePackageTest < Test::Unit::TestCase
   def test_search_packages_with_regexp
     packages = @base.search_packages /ruby.*\-dev/
     assert_operator packages, :has_key?, 'ruby1.8-dev'    
-    assert_operator packages, :has_key?, 'ruby1.9-dev'
+    assert_operator packages, :has_key?, 'ruby1.9.1-dev'
   end
   
   def test_best_package_matching
@@ -53,7 +53,7 @@ class BasePackageTest < Test::Unit::TestCase
            "Found package that no test system should have (#{package})"
 
     source = 'http://ppa.launchpad.net/mactel-support/ppa/ubuntu'
-    repos = ['lucid', 'main']
+    repos = ['oneiric', 'main']
     @base.with_package_source(source, repos) do
       assert !(@base.search_packages(package).empty?),
              "with_new_package_source didn't integrate the new source"

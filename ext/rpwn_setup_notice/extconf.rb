@@ -32,9 +32,10 @@ base_path = File.expand_path "../../..", __FILE__
 openup base_path
 
 # We really shouldn't be abusing rubygems' root. Then again, the Debian
-# maintaines shouldn't be abusing the patience of Ruby developers.
+# maintainers shouldn't be abusing the patience of Ruby developers.
 
-# Now trick rubygems and echoe into believeing that a gem got installed is good.
+# Now trick rubygems and echoe into believing that a gem got installed and
+# everything is good.
 ext_binary =  'rpwn_setup_notice' + (Gem.win_platform? ? '.dll' : '.so')
 File.open(ext_binary, 'w') { |f| }
 File.open('Makefile', 'w') do |f|

@@ -32,7 +32,7 @@ module RailsPwnerer::Base
   # executes a block in a temporary directory
   def with_temp_dir(options = {})
     base_dir = if options[:root]
-      File.exists?('/tmp') ? '/tmp' : '/'
+      File.exists?('/tmp') ? '/tmp/' : '/'
     else
       './'
     end
