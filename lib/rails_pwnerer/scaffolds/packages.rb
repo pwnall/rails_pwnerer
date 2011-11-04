@@ -48,7 +48,7 @@ class RailsPwnerer::Scaffolds::Packages
             /^libcurl\d*-openssl-dev$/
         
     # needed for solr and other java-based services
-    package 'openjdk-6-jdk'
+    package /^openjdk-\d+-jdk/
     
     # useful to be able to work with compressed data
     package 'zlib-dev', /^zlib[0-9a-z]*-dev$/

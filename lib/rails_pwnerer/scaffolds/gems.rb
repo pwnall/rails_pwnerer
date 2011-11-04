@@ -30,7 +30,7 @@ class RailsPwnerer::Scaffolds::Gems
     install_gems %w(highline termios)
 
     # Debug gems on production machines.
-    install_gems %w(echoe jeweler ruby-debug ruby-debug-ide)
+    install_gems %w(echoe jeweler ruby-debug ruby-debug19 ruby-debug-ide)
     
     # Determine number of CPUs and cores.
     install_gems %w(sys-cpu)
