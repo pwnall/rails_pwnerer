@@ -29,7 +29,7 @@ Life with +rails_pwnerer+:
 sudo apt-get -y install ruby1.9.1 make
 
 2) Install +rails_pwnerer+:
-sudo gem install rails_pwnerer make
+sudo gem install rails_pwnerer
 
 3) Get your server production-ready:
 sudo rpwn scaffold
