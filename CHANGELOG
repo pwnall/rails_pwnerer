@@ -1,3 +1,5 @@
+v0.6.103. Better git checkout command sequence.
+
 v0.6.102. Workaround for buggy apt-cache search output. 
 
 v0.6.101. Install MRI 1.9.2+ instead of 1.8.7+ when available.
