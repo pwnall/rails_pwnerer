@@ -2,8 +2,12 @@
 
 module RailsPwnerer::Base
   # check if the given path is the root of a Rails application
-  def check_rails_root(path = '.')
-    ['app', 'config', 'db', 'public', 'script', 'vendor',
-     'Rakefile'].all? { |dir| File.exists? File.join(path, dir) }     
+  def check_rails_root(app_path = '.')
+    ['app', 'config', 'public', 'Rakefile'].all? do |path|
+      File.exists? File.join(app_path, path)
+    end
+    ['script/rails', 'config/database.yml'].any? do |path|
+      File.exists? File.join(app_path, path)
+    end
   end
 end
