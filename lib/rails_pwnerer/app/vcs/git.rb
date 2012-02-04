@@ -6,9 +6,10 @@ class RailsPwnerer::App::Git
   # remove any files not in Git in the application dir
   def cleanup_app_dir(app_name, instance_name, target_dir, app_name_is_dir = false)
     Dir.chdir(app_name_is_dir ? app_name : RailsPwnerer::Config[app_name, instance_name][:app_path]) do
-      next unless File.exist?(target_dir)
-      Kernel.system "git clean -d -f -x -- #{target_dir}"
-      Kernel.system "git checkout -- #{target_dir}"
+      if File.exist?(target_dir)
+        Kernel.system "git clean -d -f -x -- #{target_dir}"
+        Kernel.system "git checkout -- #{target_dir}"
+      end
     end
   end
   
@@ -29,7 +30,7 @@ class RailsPwnerer::App::Git
   def revert_config_changes(app_name, instance_name)
     Dir.chdir RailsPwnerer::Config[app_name, instance_name][:app_path] do
       ['config', 'Gemfile', 'Gemfile.lock'].each do |dir|
-        next unless File.exist?(target_dir)
+        next unless File.exist?(dir)
         Kernel.system "git clean -d -f -x -- #{dir}"
         Kernel.system "git checkout -- #{dir}"
       end

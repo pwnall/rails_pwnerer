@@ -1,3 +1,5 @@
+v0.6.104. Fixed previously introduced bug.
+
 v0.6.103. Better git checkout command sequence.
 
 v0.6.102. Workaround for buggy apt-cache search output. 
