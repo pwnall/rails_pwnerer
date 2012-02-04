@@ -26,12 +26,12 @@ class RailsPwnerer::App::Gems
       # Phase 2: bundler / rails install
       # Install the gems needed by the app.
       if File.exist? 'Gemfile'
-        unless /^gem ['"]thin['"]/ =~ File.read('Gemfile')
+        unless /^\s+gem\s+['"]thin['"]/ =~ File.read('Gemfile')
           File.open('Gemfile', 'a') { |f| f.write "\ngem 'thin'\n"}
         end
-        system "bundle install"
+        Kernel.system "bundle install"
       else
-        system "rake gems:install RAILS_ENV=production"
+        Kernel.system "rake gems:install RAILS_ENV=production"
       end
     end    
   end

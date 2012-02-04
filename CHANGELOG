@@ -1,3 +1,5 @@
+v0.6.106. Better check for thin in application Gemfile.
+
 v0.6.105. Better check for Rails directory structure.
 
 v0.6.104. Fixed previously introduced bug.
