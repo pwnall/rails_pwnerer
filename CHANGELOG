@@ -1,3 +1,5 @@
+v0.6.109. Allow .crt for SSL certificate chains.
+
 v0.6.108. Re-release with X-Forwarded-For for real.
 
 v0.6.107. Added X-Forwarded-For header to nginx config.

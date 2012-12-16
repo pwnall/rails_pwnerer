@@ -31,7 +31,7 @@ class RailsPwnerer::App::NginxConfig
       # server configuration -- big and ugly
       f << <<NGINX_CONFIG
   server {
-    listen #{app_port};
+    listen #{app_port}#{app_config[:ssl_key] ? ' ssl' : ''};
     charset utf-8;
     #{app_config[:ssl_key] ? 'ssl on;' : ''}
     #{app_config[:ssl_key] ? "ssl_certificate #{app_config[:ssl_cert]};" : ''}

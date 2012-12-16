@@ -3,7 +3,7 @@ require 'yaml'
 
 class RailsPwnerer::App::Config
   include RailsPwnerer::Base
-  
+
   def random_db_password
     (0...16).map { |i| "abcdefghijklmnopqrstuvwxyz"[rand(26),1]}.join
   end
@@ -16,8 +16,8 @@ class RailsPwnerer::App::Config
     app_db[:app_path] = File.join(RailsPwnerer::Config.path_to(:apps), app_name + '.' + instance_name)
     # the path to application backups
     app_db[:backup_path] ||= File.join(RailsPwnerer::Config.path_to(:backups), app_name + '.' + instance_name)
-        
-    # the user which will receive the "keys" to the production system 
+
+    # the user which will receive the "keys" to the production system
     app_db[:pwnerer_user] ||= RailsPwnerer::Config[:host][:pwnerer_user]
     # the number of frontends for the application instance
     app_db[:frontends] ||= 4 # most computers have 2 cores nowadays
@@ -25,7 +25,7 @@ class RailsPwnerer::App::Config
     app_db[:frontends_per_core] ||= 2 # best practice
     # the first internal port for the application instance
     app_db[:port0] = 0  # will be overwritten during allocation
-    # the name of the database for the application instance 
+    # the name of the database for the application instance
     app_db[:db_name] ||= (app_name + '_' + instance_name + '_prod')[0...60] # avoiding mySQL breakage
     # the datbase user for the given application
     app_db[:db_user] ||= (app_name + '_' + instance_name)[0...16] # mySQL doesn't like long user names
@@ -45,7 +45,7 @@ class RailsPwnerer::App::Config
     app_db[:gems] ||= ''
     # set to disable accidental db resets (on production vs. staging instances)
     app_db[:enable_db_reset] ||= false
-    
+
     # the number of cores on the platform
     app_db[:detected_cores] ||= cpu_cores.length
   end
@@ -55,34 +55,40 @@ class RailsPwnerer::App::Config
     app_db_name = RailsPwnerer::Config.app_db_name(app_name, instance_name)
     app_db = RailsPwnerer::Config.create_db app_db_name
     populate_defaults app_name, instance_name, app_db
-    
+
     FileUtils.mkpath app_db[:app_path]
-        
-    RailsPwnerer::Config.flush_db app_db    
+
+    RailsPwnerer::Config.flush_db app_db
     return app_db[:app_path]
   end
-      
+
   # pushes config changes from the application file to the database
   def update(app_name, instance_name)
     app_config = RailsPwnerer::Config[app_name, instance_name]
-    
+
     db_name, db_user, db_pass = app_config[:db_name], app_config[:db_user], app_config[:db_pass]
     app_config.clear
     # NOTE: we don't restore the password on purpose, to get a new password on the update
     # this is useful so processes that were spawned before the update can't corrupt the db
     app_config[:db_name], app_config[:db_user] = db_name, db_user
-    
+
     populate_defaults app_name, instance_name, app_config
     Dir.chdir app_config[:app_path] do
       # Populate the default SSL configuration if the right files exist.
       ssl_cert = File.expand_path "config/rails_pwnerer/#{instance_name}.cer"
-      ssl_key = File.expand_path "config/rails_pwnerer/#{instance_name}.pem"      
+
+      ssl_cert2 = File.expand_path "config/rails_pwnerer/#{instance_name}.crt"
+      if !File.exists?(ssl_cert) and File.exists?(ssl_cert2)
+        ssl_cert = ssl_cert2
+      end
+
+      ssl_key = File.expand_path "config/rails_pwnerer/#{instance_name}.pem"
       if File.exists?(ssl_cert) and File.exists?(ssl_key)
         app_config[:ssl_cert] = ssl_cert
         app_config[:ssl_key] = ssl_key
         app_config[:port] = 443
       end
-      
+
       ["config/rails_pwnerer/.yml", "config/rails_pwnerer/#{instance_name}.yml"].each do |fname|
         next unless File.exists? fname
         config_update = File.open(fname, 'r') { |f| YAML.load f } rescue nil
@@ -95,17 +101,17 @@ class RailsPwnerer::App::Config
         end
       end
     end
-    
+
     # TODO: if database settings changed, the database should be moved (re-created or re-keyed)
     if db_pass != app_config[:db_pass]
       db_pass = random_db_password if !db_pass || db_pass.empty?
       RailsPwnerer::App::Database.new.manage app_name, instance_name, :rekey
     end
-    
+
     RailsPwnerer::Config.flush_db RailsPwnerer::Config.app_db_name(app_name, instance_name)
   end
-  
-  def manage(app_name, instance_name, action)    
+
+  def manage(app_name, instance_name, action)
     case action
     when :rekey
       app_config = RailsPwnerer::Config[app_name, instance_name]
@@ -116,7 +122,7 @@ class RailsPwnerer::App::Config
   def setup(app_name, instance_name)
     update app_name, instance_name
   end
-  
+
   def remove(app_name, instance_name)
     app_db_name = RailsPwnerer::Config.app_db_name(app_name, instance_name)
     RailsPwnerer::Config.drop_db app_db_name
