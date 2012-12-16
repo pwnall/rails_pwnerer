@@ -1,3 +1,5 @@
+v0.6.108. Re-release with X-Forwarded-For for real.
+
 v0.6.107. Added X-Forwarded-For header to nginx config.
 
 v0.6.106. Better check for thin in application Gemfile.
