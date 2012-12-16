@@ -1,3 +1,5 @@
+v0.6.107. Added X-Forwarded-For header to nginx config.
+
 v0.6.106. Better check for thin in application Gemfile.
 
 v0.6.105. Better check for Rails directory structure.
@@ -6,7 +8,7 @@ v0.6.104. Fixed previously introduced bug.
 
 v0.6.103. Better git checkout command sequence.
 
-v0.6.102. Workaround for buggy apt-cache search output. 
+v0.6.102. Workaround for buggy apt-cache search output.
 
 v0.6.101. Install MRI 1.9.2+ instead of 1.8.7+ when available.
 
@@ -16,7 +18,7 @@ v0.6.99. Reinstall gems when restoring an app from backup.
 
 v0.6.98. Fixed various crashes when restoring a backup.
 
-v0.6.97. Allow "scaffold config" to run when a database already exists. 
+v0.6.97. Allow "scaffold config" to run when a database already exists.
 
 v0.6.96. Another bugfix in the rubygems configuration.
 
@@ -154,7 +156,7 @@ v0.6.29. Support for checking out from Perforce.
 
 v0.6.28. rpwndev can help add a Rails application tree to a version control repository.
 
-v0.6.27. Fixed cpu detection so it doesn't crash if neither sys-cpu nor procfs are available. 
+v0.6.27. Fixed cpu detection so it doesn't crash if neither sys-cpu nor procfs are available.
 
 v0.6.26. Fixed local git configuration so updates work and don't wipe logs.
 
@@ -215,7 +217,7 @@ v0.5.18. Bugfix: removal scripts are called at the right time too.
 v0.5.17. Ability to call custom scripts during an app's lifecycle.
 
 v0.5.16. Letter-based database passwords (ruby's mysql doesn't like numbers).
- 
+
 v0.5.15. Home-baked process info (in case Sys::Proctable doesn't work).
 
 v0.5.14. App-directed gem installation (because Rails 2.1.0 doesn't quite work yet).
@@ -230,7 +232,7 @@ v0.5.10. Fixed bug in nginx reconfiguration on startup.
 
 v0.5.9. Better method for locating gems.
 
-v0.5.8. Fixed crashing in base/process.rb when sys-proctable isn't there (scaffolding time). 
+v0.5.8. Fixed crashing in base/process.rb when sys-proctable isn't there (scaffolding time).
 
 v0.5.7. Better procedure for removing an instance.
 
@@ -268,7 +270,7 @@ v0.4.10. Added gems needed to monitor system health.
 
 v0.4.9. Added app directory cleanup before backup.
 
-v0.4.8. Implemented app directory cleanup (removes cached .js and .css files) on 'update'. 
+v0.4.8. Implemented app directory cleanup (removes cached .js and .css files) on 'update'.
 
 v0.4.7. Actually implemented 'console'.
 
