@@ -1,4 +1,5 @@
 *~
+*.sw*
 .loadpath
 ext/**/Makefile
 ext/**/*.dll
