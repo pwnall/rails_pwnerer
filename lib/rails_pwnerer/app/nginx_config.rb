@@ -34,7 +34,6 @@ class RailsPwnerer::App::NginxConfig
     listen #{app_port}#{app_config[:ssl_key] ? ' ssl' : ''};
     #{(app_config[:ssl_key] && app_config[:non_ssl_port] != 0) ? "listen #{app_config[:non_ssl_port]};" : "" }
     charset utf-8;
-    #{app_config[:ssl_key] ? 'ssl on;' : ''}
     #{app_config[:ssl_key] ? "ssl_certificate #{app_config[:ssl_cert]};" : ''}
     #{app_config[:ssl_key] ? "ssl_certificate_key #{app_config[:ssl_key]};" : ''}
     #{(dns_names.empty? ? '' : "server_name " + dns_names.join(' ') + ";")}
