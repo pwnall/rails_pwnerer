@@ -89,7 +89,7 @@ class RailsPwnerer::App::Config
         app_config[:port] = 443
       end
 
-      ["config/rails_pwnerer/.yml", "config/rails_pwnerer/#{instance_name}.yml"].each do |fname|
+      ["config/rails_pwnerer.yml", "config/rails_pwnerer/#{instance_name}.yml"].each do |fname|
         next unless File.exists? fname
         config_update = File.open(fname, 'r') { |f| YAML.load f } rescue nil
         unless config_update
