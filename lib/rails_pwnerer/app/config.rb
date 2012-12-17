@@ -35,8 +35,10 @@ class RailsPwnerer::App::Config
     app_db[:dns_name] ||= ''
     # the environment to run the application in
     app_db[:environment] ||= 'production'
-    # a port for server-based filtering (multiple apps on the same box)
+    # main port where the application receives HTTP(S) outside connections
     app_db[:port] ||= 80
+    # HTTPS applications also accept HTTP connections here, unless 0
+    app_db[:non_ssl_port] ||= 80
     # the maximum request size (megabytes) to be accepted by an application
     app_db[:max_request_mb] ||= 48
     # comma-separated directories that should be writable by the application user
@@ -87,6 +89,7 @@ class RailsPwnerer::App::Config
         app_config[:ssl_cert] = ssl_cert
         app_config[:ssl_key] = ssl_key
         app_config[:port] = 443
+        app_config[:non_ssl_port] = 80
       end
 
       ["config/rails_pwnerer.yml", "config/rails_pwnerer/#{instance_name}.yml"].each do |fname|
