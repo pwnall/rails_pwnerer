@@ -1,3 +1,5 @@
+v0.7.4. Better nginx configuration.
+
 v0.7.3. Another bugfix for HTTP / HTTPS mixed configurations.
 
 v0.7.2. Bugfix in the HTTP / HTTPS mixed support.
