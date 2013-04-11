@@ -22,11 +22,11 @@ class RailsPwnerer::App::NginxConfig
                              app_name + '.' + instance_name)
     File.open(nginx_config, 'w') do |f|
       # link to the frontends
-      f << "  upstream #{app_name}_#{instance_name} {\n"
+      f << "upstream #{app_name}_#{instance_name} {\n"
       RailsPwnerer::Config.app_frontends(app_name, instance_name).times do |instance|
-        f << "    server 127.0.0.1:#{first_port + instance};\n"
+        f << "  server 127.0.0.1:#{first_port + instance};\n"
       end
-      f << "  }\n\n"
+      f << "}\n\n"
 
       # server configuration -- big and ugly
       f << <<NGINX_CONFIG
