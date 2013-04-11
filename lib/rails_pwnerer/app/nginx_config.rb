@@ -30,51 +30,41 @@ class RailsPwnerer::App::NginxConfig
 
       # server configuration -- big and ugly
       f << <<NGINX_CONFIG
-  server {
-    listen #{app_port}#{app_config[:ssl_key] ? ' ssl' : ''};
-    #{(app_config[:ssl_key] && app_config[:non_ssl_port] != 0) ? "listen #{app_config[:non_ssl_port]};" : "" }
-    charset utf-8;
-    #{app_config[:ssl_key] ? "ssl_certificate #{app_config[:ssl_cert]};" : ''}
-    #{app_config[:ssl_key] ? "ssl_certificate_key #{app_config[:ssl_key]};" : ''}
-    #{(dns_names.empty? ? '' : "server_name " + dns_names.join(' ') + ";")}
-    root #{app_config[:app_path]}/public;
-    client_max_body_size #{app_config[:max_request_mb]}M;
-    location ~* ^/assets/ {
-       gzip_static on;
-       expires max;
-       add_header Cache-Control public;
-       break;
-    }
-    error_page 404 /404.html;
-    error_page 500 502 503 504 /500.html;
-    location / {
-      if (-f $request_filename) {
-        expires max;
-        break;
-      }
+server {
+  listen #{app_port}#{app_config[:ssl_key] ? ' ssl' : ''};
+  #{(app_config[:ssl_key] && app_config[:non_ssl_port] != 0) ? "listen #{app_config[:non_ssl_port]};" : "" }
+  charset utf-8;
+  #{app_config[:ssl_key] ? "ssl_certificate #{app_config[:ssl_cert]};" : ''}
+  #{app_config[:ssl_key] ? "ssl_certificate_key #{app_config[:ssl_key]};" : ''}
+  #{(dns_names.empty? ? '' : "server_name " + dns_names.join(' ') + ";")}
+  root #{app_config[:app_path]}/public;
+  client_max_body_size #{app_config[:max_request_mb]}M;
+  error_page 404 /404.html;
+  error_page 500 502 503 504 /500.html;
+  try_files $uri @rails;
 
-      if (-f $request_filename/index.html) {
-        expires max;
-        rewrite (.*) $1/index.html break;
-      }
-      if (-f $request_filename.html) {
-        expires max;
-        rewrite (.*) $1.html break;
-      }
+  location ~ ^/assets/ {
+    try_files $uri @rails;
+    gzip_static on;
+    expires max;
+    add_header Cache-Control public;
 
-      proxy_set_header X-Real-IP $remote_addr;
-      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-      proxy_set_header X-Forwarded-Proto $scheme;
-      proxy_set_header Host $host;
-      proxy_redirect off;
-      proxy_connect_timeout 2;
-      proxy_read_timeout 86400;
-      if (!-f $request_filename) {
-        proxy_pass http://#{app_name}_#{instance_name};
-        break;
-      }
-    }
+    open_file_cache max=1000 inactive=500s;
+    open_file_cache_valid 600s;
+    open_file_cache_errors on;
   }
+
+  location @rails {
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header Host $host;
+    proxy_redirect off;
+    proxy_connect_timeout 2;
+    proxy_read_timeout 86400;
+    proxy_pass http://#{app_name}_#{instance_name};
+  }
+}
 NGINX_CONFIG
     end
   end
