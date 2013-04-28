@@ -1,3 +1,5 @@
+v0.7.6. nginx configuration fix for redirections on non-standard ports.
+
 v0.7.5. One more nginx configuration adjustment.
 
 v0.7.4. Better nginx configuration.
