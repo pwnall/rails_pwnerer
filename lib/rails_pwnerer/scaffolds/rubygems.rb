@@ -64,7 +64,7 @@ class RailsPwnerer::Scaffolds::RubyGems
     configure_rubygems
 
     # remove the gems that are trailing behind
-    new_gems = File.dirname(File.dirname(path_to_gem('sources', '/lib/sources.rb')))
+    new_gems = path_to_gemdir
     return if new_gems == old_gems # don't wipe the new dir by mistake
     FileUtils.rm_r old_gems
   end
@@ -72,7 +72,7 @@ class RailsPwnerer::Scaffolds::RubyGems
   def preflight
     # save old lib path, in case we need to wipe it
     # we need to do this because setting up packages might wipe Ubuntu's gems
-    @@old_gems = File.dirname(File.dirname(path_to_gem('sources', '/lib/sources.rb')))
+    @@old_gems = path_to_gemdir
   end
 
   # called before packages get installed

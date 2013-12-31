@@ -6,12 +6,12 @@ module RailsPwnerer::Base
   def install_gem(gem_name)
     system "gem install #{gem_name}"
   end
-  
+
   def upgrade_gem(gem_name)
-    system "gem update #{gem_name.nil ? '' : gem_name}" 
+    system "gem update #{gem_name.nil ? '' : gem_name}"
   end
-  
-  # update the metadata for all the gems 
+
+  # update the metadata for all the gems
   def update_gems()
     system "gem update --system"
   end
@@ -26,35 +26,20 @@ module RailsPwnerer::Base
       return false
     end
   end
-  
+
   # locates the main file in a gem (used to locate the gem)
-  def path_to_gem(gem_name, discard_suffix = '')
+  def path_to_gemdir (gem_name, discard_suffix = '')
     # TODO: use the rubygems API instead of this hack
-    
-    # method 1: peek inside rubygems' treasure chest
-    begin
-      gem_pattern = (File.join `gem environment gemdir`.strip, 'gems', gem_name) + '-'
-      gem_path = Dir.glob(gem_pattern + '*').max
-    rescue
-      gem_path = nil
-    end    
-    return gem_path unless gem_path.nil? or gem_path.empty?
-    
-    # method 2: look for the main file in the gem
-    gem_path = `gem which '#{gem_name}'`.strip
-    # discard the given suffix
-    if gem_path[-(discard_suffix.length)..-1] == discard_suffix
-      gem_path[-(discard_suffix.length)..-1] = ''
-    end
-    return gem_path
+
+    `gem environment gemdir`.strip
   end
 end
 
-module RailsPwnerer::Base  
+module RailsPwnerer::Base
   def install_gems(gem_names)
     unroll_collection(gem_names) { |n| install_gem(n) }
   end
-  
+
   def upgrade_gems(gem_names)
     unroll_collection(gem_names) { |n| upgrade_gem(n) }
   end

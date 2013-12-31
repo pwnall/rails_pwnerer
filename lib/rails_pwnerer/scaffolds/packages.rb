@@ -95,7 +95,8 @@ class RailsPwnerer::Scaffolds::Packages
       end
       return return_value
     end
-    package 'ruby2.0', 'ruby2.0-dev'
+    package 'ruby2.0'
+    package 'ruby2.0-dev'
     true
   end
 
@@ -115,7 +116,8 @@ class RailsPwnerer::Scaffolds::Packages
       return return_value
     end
 
-    package 'ruby1.9.1', 'ruby1.9.1-dev'
+    package 'ruby1.9.1'
+    package 'ruby1.9.1-dev'
     true
   end
 
