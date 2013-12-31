@@ -28,7 +28,7 @@ module RailsPwnerer::Base
   end
 
   # locates the main file in a gem (used to locate the gem)
-  def path_to_gemdir (gem_name, discard_suffix = '')
+  def path_to_gemdir
     # TODO: use the rubygems API instead of this hack
 
     `gem environment gemdir`.strip
