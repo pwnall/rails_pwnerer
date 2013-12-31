@@ -6,7 +6,6 @@ Rakefile
 bin/rpwn
 bin/rpwnctl
 bin/rpwndev
-ext/rpwn_setup_notice/extconf.rb
 lib/rails_pwnerer.rb
 lib/rails_pwnerer/app/assets.rb
 lib/rails_pwnerer/app/cluster_config.rb

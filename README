@@ -6,7 +6,7 @@ much rather having ruby do that for me.
 
 Right now, +rails_pwnerer+ assumes a fresh Ubuntu 8.04 installation. You're
 welcome to test/update for other systems, and I'll be happy to merge patches,
-or add you to the RubyForge project. 
+or add you to the RubyForge project.
 
 
 Life without +rails_pwnerer+:
@@ -16,7 +16,7 @@ ready for production. You'll be frustrated in the process, but feel
 accomplished at the end. Assuming you don't do something wrong.
 
 Read a couple more 20-page guides, and learn to push newer versions
-of your application. You'll become lazy, and take shortcuts, like having 
+of your application. You'll become lazy, and take shortcuts, like having
 production passwords in the repository, or insecure file permissions, or
 you'll forget to delete cached javascripts and stylesheets from public/.
 I won't even mention backups. Or scripts to recover your frontends
@@ -26,7 +26,7 @@ application.
 Life with +rails_pwnerer+:
 
 1) Install a bootstrap version of ruby and rubygems:
-sudo apt-get -y install ruby1.9.1 make
+sudo apt-get -y install ruby
 
 2) Install +rails_pwnerer+:
 sudo gem install rails_pwnerer
@@ -54,7 +54,7 @@ sudo rpwn install you@your.repository.host/path/to/your_application.git
 or
 
 sudo rpwn install p4://you:yourpass@host:port/path/to/your/application
- 
+
 5) Maintain your application
 
 * Push the updates in the SVN repository:
@@ -76,7 +76,7 @@ rpwn console your_application
 rpwn db_console your_application
 
 * Configure DynDns for your application server
-sudo rpwn scaffold ddns full_host_name ddns_user ddns_password  
+sudo rpwn scaffold ddns full_host_name ddns_user ddns_password
 
 * Change the database password
 sudp rpwn rekey your_application
@@ -151,7 +151,7 @@ SSL servers with +rails_pwnerer+:
 1) Generate a server key:
 openssl req -new -newkey rsa:2048 -keyout config/rails_pwnerer/instance.pem -out instance.csr -nodes
 
-2) Be sure to set the CN (Common Name) to your server's DNS address. Send the 
+2) Be sure to set the CN (Common Name) to your server's DNS address. Send the
 CSR file to your CA: cat instance.csr
 
 3) Copy the certificate into the +rails_pwnerer+ configuration directory:
@@ -183,14 +183,14 @@ The following prefixes are searched for in script/rails_pwnerer:
 The first script matching the pattern is executed. This means you can
 have an "install.rb", so you can use your favorite language extension.
 You cannot have both an "install.rb" and an "install.sh" executing at
-the same time. 
+the same time.
 
 If the script ends in _su or _su.extension (e.g. _su.ruby), it will be
 run as the super-user (root). Otherwise it will be run as the
 application's user. For instance, post_reset_su.rb wil be run as the
-super-user, whereas post_reset.sh will not. 
+super-user, whereas post_reset.sh will not.
 
 Writing your lifecycle scripts in Ruby? You can use the +rails_pwnerer+
 gem to commonly-used chunks of functionality . RailsPwnage::Util
 (including RailsPwnage::Base) is likely to be useful.
- 
+
