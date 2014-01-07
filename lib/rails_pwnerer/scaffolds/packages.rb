@@ -76,7 +76,7 @@ class RailsPwnerer::Scaffolds::Packages
   # The ruby environment (ruby, irb, rubygems).
   def install_ruby
     # remove the bootstrap version of ruby to install the best available one.
-    remove_packages %w(ruby)
+    remove_packages %w(ruby ruby1.8 ruby1.9.1 ruby2.0)
     install_ruby_20 || install_ruby_19
   end
 
