@@ -13,16 +13,20 @@ class RailsPwnerer::Scaffolds::Gems
   end
 
   def install_databases
-    install_gems %w(mysql mysql2 pg sqlite3)
+    install_gems %w(mysql2 pg sqlite3)
     install_gems %w(memcache-client)
   end
 
   def install_packagers
-    install_gems %w(rake thor bundler)
+    install_gems %w(bundler)
+  end
+
+  def install_process_managers
+    install_gems %w(foreman)
   end
 
   def install_servers
-    install_gems %w(thin unicorn)
+    install_gems %w(puma thin unicorn)
   end
 
   def install_tools
@@ -42,6 +46,7 @@ class RailsPwnerer::Scaffolds::Gems
     install_self
     install_databases
     install_packagers
+    install_process_managers
     install_servers
     install_tools
     install_gems %w(rails)
